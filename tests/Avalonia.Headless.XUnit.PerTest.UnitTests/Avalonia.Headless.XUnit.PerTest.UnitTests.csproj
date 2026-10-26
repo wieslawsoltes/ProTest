@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks Condition="'$(TestTargetFramework)' == ''">net8.0;net10.0</TargetFrameworks>
+    <TargetFramework Condition="'$(TestTargetFramework)' != ''">$(TestTargetFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <Nullable>disable</Nullable>
+    <DefineConstants>$(DefineConstants);XUNIT;PERTEST</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.mtp-off" Version="$(XunitV3Version)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.HarfBuzz" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Skia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="System.Reactive" Version="6.1.0" />
+    <Compile Include="../Avalonia.Headless.UnitTests/**/*.cs" />
+    <ProjectReference Include="../../src/Headless/Avalonia.Headless.XUnit/Avalonia.Headless.XUnit.csproj" />
+  </ItemGroup>
+</Project>

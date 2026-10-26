@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Headless/">
+    <Project Path="src/Headless/Avalonia.Headless.XUnit.v4/Avalonia.Headless.XUnit.v4.csproj" />
+    <Project Path="src/Headless/Avalonia.Headless.XUnit/Avalonia.Headless.XUnit.csproj" />
+    <Project Path="src/Headless/Avalonia.Headless/Avalonia.Headless.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Avalonia.Headless.XUnit.PerAssembly.UnitTests/Avalonia.Headless.XUnit.PerAssembly.UnitTests.csproj" />
+    <Project Path="tests/Avalonia.Headless.XUnit.PerTest.UnitTests/Avalonia.Headless.XUnit.PerTest.UnitTests.csproj" />
+    <Project Path="tests/Avalonia.Headless.XUnit.v4.PerAssembly.UnitTests/Avalonia.Headless.XUnit.v4.PerAssembly.UnitTests.csproj" />
+    <Project Path="tests/Avalonia.Headless.XUnit.v4.PerTest.UnitTests/Avalonia.Headless.XUnit.v4.PerTest.UnitTests.csproj" />
+  </Folder>
+</Solution>
