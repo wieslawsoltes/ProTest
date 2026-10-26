@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>ProTest.Avalonia.Headless</PackageId>
+    <Description>Avalonia headless platform and test sessions for ProTest, built against official Avalonia packages.</Description>
+    <!-- The original assembly name and public signing key satisfy Avalonia's friend-assembly declarations. -->
+    <AssemblyName>Avalonia.Headless</AssemblyName>
+    <RootNamespace>Avalonia.Headless</RootNamespace>
+    <AvaloniaAccessUnstablePrivateApis>true</AvaloniaAccessUnstablePrivateApis>
+    <Avalonia_I_Want_To_Use_Private_Apis_In_Nuget_Package_And_Promise_To_Pin_The_Exact_Avalonia_Version_In_Package_Dependency>true</Avalonia_I_Want_To_Use_Private_Apis_In_Nuget_Package_And_Promise_To_Pin_The_Exact_Avalonia_Version_In_Package_Dependency>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="[$(AvaloniaVersion)]" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="[$(AvaloniaVersion)]" />
+    <PackageReference Include="Avalonia.HarfBuzz" Version="[$(AvaloniaVersion)]" />
+  </ItemGroup>
+  <ItemGroup Label="InternalsVisibleTo">
+    <InternalsVisibleTo Include="Avalonia.Headless.NUnit, PublicKey=$(AvaloniaPublicKey)" />
+    <InternalsVisibleTo Include="Avalonia.Headless.Vnc, PublicKey=$(AvaloniaPublicKey)" />
+    <InternalsVisibleTo Include="Avalonia.UnitTests, PublicKey=$(AvaloniaPublicKey)" />
+    <InternalsVisibleTo Include="Avalonia.Base.UnitTests, PublicKey=$(AvaloniaPublicKey)" />
+    <InternalsVisibleTo Include="Avalonia.Benchmarks, PublicKey=$(AvaloniaPublicKey)" />
+    <InternalsVisibleTo Include="Avalonia.Controls.UnitTests, PublicKey=$(AvaloniaPublicKey)" />
+    <InternalsVisibleTo Include="Avalonia.Skia.UnitTests, PublicKey=$(AvaloniaPublicKey)" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="BareMinimum.ttf" />
+    <EmbeddedResource Include="BareMinimum.ttf" />
+  </ItemGroup>
+</Project>
