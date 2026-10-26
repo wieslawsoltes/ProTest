@@ -1,7 +1,7 @@
 # ProTest
 
 [![CI](https://github.com/wieslawsoltes/ProTest/actions/workflows/ci.yml/badge.svg)](https://github.com/wieslawsoltes/ProTest/actions/workflows/ci.yml)
-[![NuGet v3](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit)
+[![NuGet v3](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3)
 [![NuGet v4](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4)
 
 Headless Avalonia UI testing for xUnit 3.x and 4.x, maintained by
@@ -17,7 +17,7 @@ or developer signing secret is required.
 | Package | Purpose | Tested xUnit version | Avalonia version |
 | --- | --- | --- | --- |
 | `ProTest.Avalonia.Headless` | Headless platform and test sessions | Framework independent | **12.1.4**, exact |
-| `ProTest.Avalonia.Headless.XUnit` | Original xUnit 3.x adapter | **3.2.2** | **12.1.4**, exact |
+| `ProTest.Avalonia.Headless.XUnit.v3` | xUnit 3.x adapter | **3.2.2** | **12.1.4**, exact |
 | `ProTest.Avalonia.Headless.XUnit.v4` | xUnit 4.x adapter | **4.0.2** | **12.1.4**, exact |
 
 All three packages target **.NET 8 and .NET 10**. Their initial version is
@@ -31,7 +31,8 @@ their xUnit dependency to the corresponding major version.
 
 Install **one adapter per test project**. Both expose the original
 `Avalonia.Headless.XUnit` namespace, including `[AvaloniaFact]` and
-`[AvaloniaTheory]`. The headless assembly remains `Avalonia.Headless`.
+`[AvaloniaTheory]`. Adapter projects, assemblies, and packages use matching
+`.v3` and `.v4` suffixes. The headless assembly remains `Avalonia.Headless`.
 Remove official `Avalonia.Headless` / `Avalonia.Headless.XUnit` package
 references when migrating: ProTest supplies those types and assembly identities.
 Keep other Avalonia packages, such as themes and Skia, at version **12.1.4**.
@@ -60,7 +61,7 @@ xUnit 4.x and supports `dotnet test` with the VSTest runner:
 ```
 
 The `mtp-off` package supports VSTest on .NET 10 while retaining xUnit's
-native executable runner. For xUnit 3.x, replace the adapter with `ProTest.Avalonia.Headless.XUnit`
+native executable runner. For xUnit 3.x, replace the adapter with `ProTest.Avalonia.Headless.XUnit.v3`
 and set `xunit.v3.mtp-off` to **3.2.2**. Use `net8.0` to run on .NET 8.
 Use reflection-based xUnit packages; xUnit Native AOT packages are not
 supported by these reflection-based adapters.
@@ -255,6 +256,12 @@ See [Avalonia's private API packaging guidance](https://github.com/AvaloniaUI/Av
 and [source provenance](NOTICE.md).
 
 ## Build, test, and publish
+
+Compatible adapter sources live in `src/Headless/Avalonia.Headless.XUnit.v3`
+and are linked into the `.v4` project with MSBuild `Compile` items. Shared
+attributes, discovery, test-case definitions, and result handling are maintained
+once; version-specific execution and scheduling code stays in each project.
+Both adapters keep the same C# namespace and compile into separate assemblies.
 
 Build with the .NET 10 SDK; install the .NET 8 and .NET 10 runtimes to run
 the full test matrix. Python 3 drives the portable verification script.

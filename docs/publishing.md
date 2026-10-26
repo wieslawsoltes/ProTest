@@ -2,11 +2,29 @@
 
 The release workflow publishes the exact packages validated by the Linux CI job after the Windows, Linux, and macOS jobs all pass. Every job exercises both .NET 8 and .NET 10, including projects restored from the newly built NuGet packages in a temporary directory outside this checkout. The package tests cover attribute-based integration and the optional assembly-wide test framework through the native xUnit runner, VSTest, and Microsoft.Testing.Platform. Separate intentional-failure probes verify that async and dispatcher exceptions fail their tests and the runner process.
 
+The release contains `ProTest.Avalonia.Headless`, `ProTest.Avalonia.Headless.XUnit.v3`, and `ProTest.Avalonia.Headless.XUnit.v4`, plus their symbol packages.
+
+## Repository configuration
+
+The following GitHub settings were configured and verified for `wieslawsoltes/ProTest` on October 26, 2026:
+
+| Setting | Value |
+| --- | --- |
+| Actions environment | `nuget` |
+| Allowed deployment refs | Tags matching `v*` |
+| Required reviewers | None |
+| Wait timer | None |
+| Environment variable | `NUGET_USER=wieslawsoltes` |
+
+The username matches the [NuGet.org profile](https://www.nuget.org/profiles/wieslawsoltes). Releases proceed after the workflow's version check and CI matrix pass. Publishing authenticates with GitHub OIDC. Review the [environment settings](https://github.com/wieslawsoltes/ProTest/settings/environments) when changing release policy.
+
 ## One-time account setup
 
+These steps describe how to reproduce or update the configuration, including for a fork.
+
 1. Sign in to the NuGet.org account that should own the packages. The repository metadata credits **Wiesław Šoltés**; NuGet.org ownership is established by the publishing account and cannot be assigned through a `.csproj` or `.nuspec` field.
-2. Add a GitHub Actions environment named `nuget` to `wieslawsoltes/ProTest`. Configure the environment's protection rules and allowed release tags as appropriate for the repository.
-3. Add the GitHub Actions variable `NUGET_USER` at repository level or in the `nuget` environment. Use your NuGet.org **profile username**, not an email address. No long-lived API key secret is needed.
+2. Add a GitHub Actions environment named `nuget` to the repository. Select deployment branches and tags, then add a **tag** rule for `v*` to match the release workflow. The ProTest configuration has no required reviewer or wait timer; add those only if your release process needs them.
+3. Add the GitHub Actions variable `NUGET_USER` at repository level or in the `nuget` environment. Use your NuGet.org **profile username**, not an email address. ProTest uses `wieslawsoltes` in the `nuget` environment. No long-lived API key secret is needed.
 4. In NuGet.org, open your account's **Trusted Publishing** settings and add a GitHub policy with these values:
 
    | Setting | Value |

@@ -15,9 +15,11 @@ because the fork's development renderer depends on unreleased geometry APIs.
 
 ProTest changes include standalone NuGet dependencies, package metadata,
 the xUnit 4.x adapter, cancellable session shutdown and cleanup, regression
-and package-consumer tests, and build and release automation. Original namespaces and existing assembly names are
-retained. ProTest is an independent distribution, not an official Avalonia
-or xUnit package.
+and package-consumer tests, and build and release automation. Original C#
+namespaces and the `Avalonia.Headless` assembly identity are retained; adapter
+projects, assemblies, and packages use `.v3` and `.v4` suffixes. Compatible
+adapter source files are linked into both projects. ProTest is an independent
+distribution, not an official Avalonia or xUnit package.
 
 `build/avalonia.snk` is the signing key deliberately distributed in Avalonia's
 public source repository. It preserves the assembly identity used by
