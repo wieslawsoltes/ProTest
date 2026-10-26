@@ -217,8 +217,15 @@ def package_tests(configuration: str, frameworks: list[str], version: dict[str, 
         ET.ElementTree(configuration_xml).write(nuget_config, encoding="utf-8", xml_declaration=True)
         environment = os.environ.copy()
         environment.pop("PROTEST_FAILURE_PROBE", None)
-        environment["NUGET_PACKAGES"] = str(temporary_root / "packages")
-        properties = [f"-p:ProTestVersion={version['Version']}"] + [
+        # Disposable consumers must not leave build servers holding their working
+        # directories open on Windows. These settings also reach MTP's in-process
+        # MSBuild host, whose CLI does not accept --disable-build-servers.
+        environment.update({
+            "NUGET_PACKAGES": str(temporary_root / "packages"),
+            "MSBUILDDISABLENODEREUSE": "1",
+            "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        })
+        properties = ["-p:UseSharedCompilation=false", f"-p:ProTestVersion={version['Version']}"] + [
             f"-p:{name}={value}" for name, value in version.items() if name != "Version"
         ]
         projects = sorted(consumers.glob("*/*.csproj"))
