@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>ProTest.Avalonia.Headless</PackageId>
-    <Description>Avalonia headless platform and test sessions for ProTest, built against official Avalonia packages.</Description>
+    <Description>Avalonia headless platform, test sessions, input and gesture simulation, tree inspection, Appium-style automation, and recording helpers for ProTest, built against official Avalonia packages.</Description>
     <!-- The original assembly name and public signing key satisfy Avalonia's friend-assembly declarations. -->
     <AssemblyName>Avalonia.Headless</AssemblyName>
     <RootNamespace>Avalonia.Headless</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AvaloniaAccessUnstablePrivateApis>true</AvaloniaAccessUnstablePrivateApis>
     <Avalonia_I_Want_To_Use_Private_Apis_In_Nuget_Package_And_Promise_To_Pin_The_Exact_Avalonia_Version_In_Package_Dependency>true</Avalonia_I_Want_To_Use_Private_Apis_In_Nuget_Package_And_Promise_To_Pin_The_Exact_Avalonia_Version_In_Package_Dependency>
   </PropertyGroup>
