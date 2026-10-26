@@ -640,19 +640,6 @@ public enum PixelFormat
 
 </details>
 
-### FrameBitmap
-
-[Source](https://github.com/wieslawsoltes/ProTest/blob/main/src/Headless/Avalonia.Headless/Testing/Recording/FrameBitmap.cs)
-
-<details>
-<summary>Public signatures</summary>
-
-```csharp
-public static WriteableBitmap Create(CapturedFrame frame, AlphaFormat alphaFormat);
-```
-
-</details>
-
 ### FrameBuffer
 
 [Source](https://github.com/wieslawsoltes/ProTest/blob/main/src/Headless/Avalonia.Headless/Testing/Recording/FrameBuffer.cs)
@@ -715,19 +702,6 @@ public async Task EncodeFrameAsync(CapturedFrame frame, CancellationToken cancel
 public void FinalizeEncoding();
 public async Task FinalizeAsync(CancellationToken cancellationToken = default);
 public void Dispose();
-```
-
-</details>
-
-### GifAnimationWriter
-
-[Source](https://github.com/wieslawsoltes/ProTest/blob/main/src/Headless/Avalonia.Headless/Testing/Recording/GifAnimationWriter.cs)
-
-<details>
-<summary>Public signatures</summary>
-
-```csharp
-public static void Write(string outputPath, IReadOnlyList<CapturedFrame> frames, int frameRate);
 ```
 
 </details>
@@ -872,10 +846,6 @@ public CapturedFrame[] GetCapturedFrames();
 public bool TryGetFrame(out CapturedFrame? frame);
 public CapturedFrame? CaptureNow();
 public void Dispose();
-public RenderCaptureHandler(RenderFrameCapture capture, TopLevel target);
-public override void OnAnimationFrameUpdate();
-public override void OnRender(ImmediateDrawingContext drawingContext);
-public new void RegisterForNextAnimationFrameUpdate();
 ```
 
 </details>
