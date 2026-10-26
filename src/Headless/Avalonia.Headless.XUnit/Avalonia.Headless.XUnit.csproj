@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <IsPackable>true</IsPackable>
+    <PackageId>ProTest.Avalonia.Headless.XUnit</PackageId>
+    <Description>Avalonia headless UI testing integration for xUnit.net 3.x.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.extensibility.core" Version="[$(XunitV3Version),4.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Avalonia.Headless\Avalonia.Headless.csproj" />
+  </ItemGroup>
+
+</Project>
