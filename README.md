@@ -19,7 +19,7 @@ Appium-style automation, and recording.
 
 ## Testing helpers
 
-`ProTest.Avalonia.Headless` also includes the testing helpers from PanAndZoom:
+`ProTest.Avalonia.Headless` includes a comprehensive set of testing helpers:
 
 - Mouse, keyboard, touch, and multi-touch simulation.
 - Gesture recognizer helpers and scripted gestures.

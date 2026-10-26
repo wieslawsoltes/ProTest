@@ -63,7 +63,3 @@ var nextSibling = xpath.SelectFirst("//Button[@Name='first']/following-sibling::
 | `preceding-sibling::Type` | Preceding siblings |
 | `ancestor::Type` | Ancestor nodes |
 | `descendant::Type` | Descendant nodes |
-
----
-
-Adapted from the [PanAndZoom headless testing guide](https://github.com/wieslawsoltes/PanAndZoom/blob/0c938aa771970ad8e2387f669f910c8b2a2d4d30/docs/HeadlessTestingAPI.md), copyright © Wiesław Šoltés, [MIT licensed](../../attribution/panandzoom-license.md).

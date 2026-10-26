@@ -1,7 +1,7 @@
 The MIT License (MIT)
 
 Copyright (c) AvaloniaUI OÜ
-Copyright (c) Wiesław Šoltés (PanAndZoom testing helpers and ProTest modifications)
+Copyright (c) Wiesław Šoltés
 All Rights Reserved
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -5,7 +5,7 @@ sidebar_position: 3
 doc-type: how-to
 ---
 
-The PanAndZoom helpers are included in `ProTest.Avalonia.Headless`, and therefore in both xUnit adapter installations. Use them inside an Avalonia test or a manual headless session.
+The testing helpers are included in `ProTest.Avalonia.Headless`, and therefore in both xUnit adapter installations. Use them inside an Avalonia test or a manual headless session.
 
 | Goal | API | Reference |
 | --- | --- | --- |

@@ -60,7 +60,3 @@ If your gesture handlers aren't being called:
 1. Check that handlers are registered before `window.Show()`
 2. Verify the control is actually in the visual tree
 3. Use `GestureSimulator` if you just need to raise events without actual recognizers
-
----
-
-Adapted from the [PanAndZoom headless testing guide](https://github.com/wieslawsoltes/PanAndZoom/blob/0c938aa771970ad8e2387f669f910c8b2a2d4d30/docs/HeadlessTestingAPI.md), copyright © Wiesław Šoltés. See [source attribution and licenses](../attribution/sources.md).

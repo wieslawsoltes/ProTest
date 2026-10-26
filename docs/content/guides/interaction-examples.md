@@ -1,334 +1,157 @@
 ---
 title: "Interaction recipes"
-description: "Examples and API guidance for interaction recipes."
+description: "Complete tests for text input, touch dragging, and frame recording."
 sidebar_position: 7
-doc-type: reference
+doc-type: how-to
 ---
 
-These extended recipes originated in PanAndZoom. `ZoomBorder` and `ButtonName` belong to the separate [PanAndZoom library](https://github.com/wieslawsoltes/PanAndZoom), not ProTest. Add a compatible PanAndZoom package or substitute the control under test. Recording recipes require [Skia rendering](rendering.md); video conversion also needs FFmpeg.
+These examples use standard Avalonia controls and work with either ProTest xUnit adapter. Start with the [xUnit setup](../getting-started/xunit.md) and load your application's theme for template-dependent controls such as `TextBox`. Each test closes its window during cleanup.
 
-## Example 1: Testing Pinch-to-Zoom
+## Find a control and enter text
 
-```csharp
-[AvaloniaFact]
-public void ZoomBorder_PinchZoom_ChangesZoomLevel()
-{
-    // Setup
-    var zoomBorder = new ZoomBorder { PanButton = ButtonName.Left };
-    Gestures.AddPinchHandler(zoomBorder, (s, e) => { });
-
-    var window = new Window
-    {
-        Width = 400,
-        Height = 300,
-        Content = zoomBorder
-    };
-    window.Show();
-
-    try
-    {
-        var simulator = new TouchInputSimulator();
-        var center = new Point(200, 150);
-
-        // Capture initial zoom
-        double initialZoom = zoomBorder.ZoomX;
-
-        // Perform pinch zoom (zoom in)
-        simulator.SimulatePinchZoom(zoomBorder, center,
-            startDistance: 50, endDistance: 150, steps: 10);
-
-        // Verify zoom increased
-        Assert.True(zoomBorder.ZoomX > initialZoom);
-    }
-    finally
-    {
-        window.Close();
-    }
-}
-```
-
-## Example 2: Recording Gesture Test
+Use the driver when a test should describe a sequence of user interactions. Tree queries can then verify that a locator selected the intended control.
 
 ```csharp
-[AvaloniaFact]
-public void Recording_PinchZoom_CreatesVideoFile()
+using System.Linq;
+using Avalonia.Controls;
+using Avalonia.Headless.XUnit;
+using Avalonia.HeadlessTestingFramework;
+using Avalonia.HeadlessTestingFramework.Appium;
+using Xunit;
+
+public class EditorInteractionTests
 {
-    using var simulator = new RecordedTouchSimulator();
-    simulator.FramesPerStep = 2;
-
-    var zoomBorder = new ZoomBorder { PanButton = ButtonName.Left };
-    var window = new Window { Width = 400, Height = 300, Content = zoomBorder };
-    window.Show();
-
-    try
+    [AvaloniaFact]
+    public void Typing_updates_the_named_editor()
     {
-        // Start recording
-        simulator.StartRecording(window, outputPath: "/test/pinch_zoom");
-
-        // Perform recorded gestures
-        simulator.AddMarker("ZoomIn");
-        simulator.RecordedPinchZoom(zoomBorder, new Point(200, 150), 50, 150);
-
-        simulator.AddMarker("Pan");
-        simulator.RecordedDrag(zoomBorder, new Point(200, 150), new Point(100, 100));
-
-        // Stop and convert to video
-        var (stats, videoResult) = simulator.StopRecordingAndConvertToVideo(
-            new VideoConversionOptions { Format = VideoFormat.Mp4 });
-
-        Assert.True(stats.FramesCaptured > 0);
-        Assert.True(videoResult.Success);
-    }
-    finally
-    {
-        window.Close();
-    }
-}
-```
-
-## Example 3: Using GestureRecognizerTestHelper for Scroll
-
-```csharp
-[AvaloniaFact]
-public void ZoomBorder_Scroll_PansContent()
-{
-    var zoomBorder = new ZoomBorder { PanButton = ButtonName.Left };
-    var scrollRaised = false;
-
-    Gestures.AddScrollGestureHandler(zoomBorder, (s, e) => scrollRaised = true);
-
-    var window = new Window { Content = zoomBorder };
-    window.Show();
-
-    try
-    {
-        var helper = new GestureRecognizerTestHelper();
-        var startPos = new Point(200, 150);
-
-        // Perform drag gesture
-        helper.Down(zoomBorder, startPos);
-        for (int i = 1; i <= 10; i++)
+        var editor = new TextBox { Name = "editor" };
+        var window = new Window { Content = editor, Width = 240, Height = 80 };
+        try
         {
-            helper.Move(zoomBorder, new Point(startPos.X - i * 5, startPos.Y));
+            window.Show();
+            using var driver = new AvaloniaDriver(window);
+            driver.FindElement(By.Id("editor")).SendKeys("ProTest helpers");
+
+            Assert.Equal("ProTest helpers", editor.Text);
+            Assert.Same(editor, window.Find<TextBox>().FindFirst<TextBox>());
+            Assert.Same(editor,
+                new TreeXPath(window)
+                    .Select<TextBox>("//TextBox[@Name='editor']")
+                    .Single());
         }
-        helper.Up(zoomBorder, new Point(150, 150));
-
-        // Verify scroll occurred
-        Assert.True(scrollRaised);
-    }
-    finally
-    {
-        window.Close();
-    }
-}
-```
-
-## Example 4: Complex Multi-Gesture Recording
-
-```csharp
-[AvaloniaFact]
-public async Task Recording_CompleteWorkflow_WithVideo()
-{
-    using var simulator = new RecordedTouchSimulator();
-
-    var control = CreateTestControl();
-    var window = new Window { Content = control };
-    window.Show();
-
-    try
-    {
-        var session = simulator.StartRecording(window,
-            options: RecordingOptions.HighQuality,
-            outputPath: "/recordings/workflow");
-
-        // Complex interaction sequence
-        simulator.AddMarker("Initial");
-        simulator.CaptureFrame();
-
-        simulator.AddMarker("ZoomIn");
-        simulator.RecordedPinchZoom(control, new Point(200, 150), 50, 150, steps: 15);
-
-        simulator.AddMarker("Pan");
-        simulator.RecordedTwoFingerPan(control,
-            new Point(200, 150), new Point(100, 100), steps: 10);
-
-        simulator.AddMarker("Rotate");
-        simulator.RecordedRotation(control,
-            new Point(200, 150), 50, 0, 90, steps: 20);
-
-        simulator.AddMarker("ZoomOut");
-        simulator.RecordedPinchZoom(control, new Point(200, 150), 150, 50, steps: 15);
-
-        // Record animation settling
-        await simulator.RecordAnimationAsync(TimeSpan.FromMilliseconds(500));
-
-        var stats = simulator.StopRecording();
-
-        // Convert to multiple formats
-        var converter = new VideoConverter();
-
-        var mp4Result = await converter.ConvertPngSequenceToVideoAsync(
-            session.Encoder!.OutputFiles[0].Directory!.FullName,
-            options: new VideoConversionOptions { Format = VideoFormat.Mp4 });
-
-        var gifResult = await converter.ConvertPngSequenceToVideoAsync(
-            session.Encoder!.OutputFiles[0].Directory!.FullName,
-            options: new VideoConversionOptions { Format = VideoFormat.Gif, FrameRate = 15 });
-
-        // Assertions
-        Assert.True(stats.FramesCaptured > 50);
-        Assert.Contains(session.Events, e => e.Description == "ZoomIn");
-        Assert.True(mp4Result.Success);
-        Assert.True(gifResult.Success);
-    }
-    finally
-    {
-        window.Close();
-    }
-}
-```
-
-## Example 5: Keyboard and Mouse Input Recording
-
-```csharp
-[AvaloniaFact]
-public void Recording_KeyboardAndMouseWorkflow_WithVideo()
-{
-    using var simulator = new RecordedTouchSimulator();
-    simulator.FramesPerStep = 1;
-
-    var textBox = new TextBox { Width = 300, Height = 30 };
-    var button = new Button { Content = "Submit", Width = 100 };
-
-    var window = new Window
-    {
-        Width = 400, Height = 200,
-        Content = new StackPanel
+        finally
         {
-            Spacing = 20,
-            Children = { textBox, button }
+            window.Close();
         }
-    };
-    window.Show();
-
-    try
-    {
-        var session = simulator.StartRecording(window, outputPath: "/recordings/input_test");
-
-        // Click text box to focus
-        simulator.AddMarker("FocusTextBox");
-        simulator.RecordedMouseClick(textBox, new Point(150, 15));
-
-        // Type some text
-        simulator.AddMarker("TypeText");
-        simulator.RecordedKeyPress(textBox, Key.H);
-        simulator.RecordedKeyPress(textBox, Key.E);
-        simulator.RecordedKeyPress(textBox, Key.L);
-        simulator.RecordedKeyPress(textBox, Key.L);
-        simulator.RecordedKeyPress(textBox, Key.O);
-
-        // Select all (Ctrl+A)
-        simulator.AddMarker("SelectAll");
-        simulator.RecordedKeyboardShortcut(textBox, Key.A, KeyModifiers.Control);
-
-        // Tab to button
-        simulator.AddMarker("TabToButton");
-        simulator.RecordedTabNavigation(textBox, 1);
-
-        // Click button
-        simulator.AddMarker("ClickSubmit");
-        simulator.RecordedMouseClick(button, new Point(50, 15));
-
-        var stats = simulator.StopRecording();
-
-        // Convert to video
-        var converter = new VideoConverter();
-        if (converter.IsFfmpegAvailable())
-        {
-            var result = converter.ConvertPngSequenceToVideo(
-                session.Encoder!.OutputFiles[0].Directory!.FullName,
-                options: new VideoConversionOptions { Format = VideoFormat.Mp4 });
-            Assert.True(result.Success);
-        }
-
-        Assert.True(stats.FramesCaptured > 0);
-        Assert.Contains(session.Events, e => e.Description == "TypeText");
-    }
-    finally
-    {
-        window.Close();
     }
 }
 ```
 
-## Example 6: Mouse Drag and Scroll Testing
+See [driver and elements](../reference/automation/driver.md) for additional locators and actions, or [control finder](../reference/trees/control-finder.md) for fluent tree filters.
+
+## Verify a complete touch drag
+
+Observe the pointer events delivered to a control, including the final position and release of capture. This helps test controls that implement their own dragging behavior.
 
 ```csharp
-[AvaloniaFact]
-public void Recording_MouseDragAndScroll_CreatesFrames()
+using System.Collections.Generic;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Headless.XUnit;
+using Avalonia.HeadlessTestingFramework;
+using Avalonia.Media;
+using Xunit;
+
+public class TouchInteractionTests
 {
-    using var simulator = new RecordedTouchSimulator();
-    simulator.FramesPerStep = 2;
-
-    var canvas = new Canvas
+    [AvaloniaFact]
+    public void Drag_delivers_press_moves_and_release()
     {
-        Width = 400, Height = 300,
-        Background = Brushes.LightGray
-    };
+        var target = new Border { Background = Brushes.White };
+        var window = new Window { Content = target, Width = 200, Height = 100 };
+        var pressed = 0;
+        var positions = new List<Point>();
+        var released = 0;
 
-    var items = new StackPanel();
-    items.Children.AddRange(Enumerable.Range(1, 20)
-        .Select(i => new TextBlock { Text = $"Item {i}", Height = 40 }));
-    var scrollViewer = new ScrollViewer { Width = 400, Height = 200, Content = items };
+        target.PointerPressed += (_, _) => pressed++;
+        target.PointerMoved += (_, e) => positions.Add(e.GetPosition(target));
+        target.PointerReleased += (_, _) => released++;
 
-    var window = new Window
-    {
-        Width = 400, Height = 500,
-        Content = new StackPanel { Children = { canvas, scrollViewer } }
-    };
-    window.Show();
-
-    try
-    {
-        var session = simulator.StartRecording(window, outputPath: "/recordings/drag_scroll");
-
-        // Draw a path on canvas
-        simulator.AddMarker("DrawPath");
-        var drawPath = new[]
+        try
         {
-            new Point(50, 50),
-            new Point(150, 100),
-            new Point(250, 50),
-            new Point(350, 100)
+            window.Show();
+            var touch = new GestureRecognizerTestHelper();
+            touch.Drag(target, new Point(10, 10), new Point(90, 50), steps: 4);
+
+            Assert.Equal(1, pressed);
+            Assert.Equal(4, positions.Count);
+            Assert.Equal(new Point(90, 50), positions[^1]);
+            Assert.Equal(1, released);
+            Assert.Null(touch.Captured);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+}
+```
+
+For pinch, scroll, or other recognizer-driven gestures, [register gesture handlers](gesture-registration.md) before showing the window. Use [multi-touch helpers](../reference/input/multi-touch.md) when the test needs several independent pointers.
+
+## Record and inspect a rendered frame
+
+Configure [Skia rendering](rendering.md) before running this test. It records a PNG sequence and decodes the resulting image to check its dimensions. PNG capture does not require FFmpeg.
+
+```csharp
+using System;
+using System.IO;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Headless.XUnit;
+using Avalonia.HeadlessTestingFramework.Recording;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Xunit;
+
+public class RecordingInteractionTests
+{
+    [AvaloniaFact]
+    public void Recording_writes_a_rendered_image()
+    {
+        var output = Path.Combine(
+            Path.GetTempPath(), "ProTest-recording-" + Guid.NewGuid().ToString("N"));
+        var window = new Window
+        {
+            Width = 120,
+            Height = 80,
+            Content = new Border { Background = Brushes.CornflowerBlue }
         };
-        simulator.RecordedMouseMovePath(canvas, drawPath);
 
-        // Drag operation
-        simulator.AddMarker("Drag");
-        simulator.RecordedMouseDrag(canvas,
-            new Point(50, 200), new Point(350, 200), steps: 20);
+        try
+        {
+            window.Show();
+            using var recorder = new HeadlessScreenRecorder();
+            recorder.StartRecording(window,
+                new RecordingOptions { Format = RecordingFormat.PngSequence }, output);
 
-        // Scroll down in scroll viewer
-        simulator.AddMarker("ScrollDown");
-        simulator.RecordedMouseWheel(scrollViewer,
-            new Vector(0, -5), new Point(200, 400), steps: 10);
+            Assert.True(recorder.CaptureFrame(), recorder.LastCaptureFailureReason);
+            var statistics = recorder.StopRecording();
 
-        // Scroll back up
-        simulator.AddMarker("ScrollUp");
-        simulator.RecordedMouseWheel(scrollViewer,
-            new Vector(0, 5), new Point(200, 400), steps: 10);
-
-        var stats = simulator.StopRecording();
-
-        Assert.True(stats.FramesCaptured > 20);
-    }
-    finally
-    {
-        window.Close();
+            Assert.True(statistics.FramesCaptured > 0);
+            var frames = Directory.GetFiles(output, "*.png");
+            Assert.NotEmpty(frames);
+            using var image = new Bitmap(frames[0]);
+            Assert.Equal(new PixelSize(120, 80), image.PixelSize);
+        }
+        finally
+        {
+            window.Close();
+            if (Directory.Exists(output))
+                Directory.Delete(output, recursive: true);
+        }
     }
 }
 ```
 
----
-
-Adapted from the [PanAndZoom headless testing guide](https://github.com/wieslawsoltes/PanAndZoom/blob/0c938aa771970ad8e2387f669f910c8b2a2d4d30/docs/HeadlessTestingAPI.md), copyright © Wiesław Šoltés. See [source attribution and licenses](../attribution/sources.md).
+For diagnostic recordings in CI, retain the output directory as a build artifact instead of deleting it. [Recorded input](../reference/recording/recorded-input.md) combines capture with scripted interactions; [video conversion](../reference/recording/video-converter.md) explains the optional FFmpeg workflow.

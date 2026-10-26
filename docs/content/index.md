@@ -6,7 +6,7 @@ doc-type: overview
 slug: /
 ---
 
-ProTest runs Avalonia UI tests without a desktop window. It includes xUnit **3.x and 4.x** adapters, the Avalonia headless platform, and the testing helpers originally developed for PanAndZoom.
+ProTest runs Avalonia UI tests without a desktop window. It includes xUnit **3.x and 4.x** adapters, the Avalonia headless platform, and an extensive set of testing helpers.
 
 Start with the [xUnit quick start](getting-started/xunit.md), then choose the APIs needed by your tests.
 

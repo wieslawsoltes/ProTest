@@ -74,10 +74,9 @@ const config = {
         {title: 'Upstream', items: [
           {label: 'Avalonia documentation', href: 'https://docs.avaloniaui.net'},
           {label: 'xUnit documentation', href: 'https://xunit.net'},
-          {label: 'PanAndZoom', href: 'https://github.com/wieslawsoltes/PanAndZoom'},
         ]},
       ],
-      copyright: 'ProTest · Maintained by Wiesław Šoltés. Built on Avalonia and PanAndZoom. Source attribution and licenses are included in the documentation.',
+      copyright: 'ProTest · Maintained by Wiesław Šoltés. Built on Avalonia. Source attribution and licenses are included in the documentation.',
     },
     prism: {
       theme: prismThemes.github,

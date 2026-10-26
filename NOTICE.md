@@ -28,16 +28,3 @@ credential. NuGet publishing uses a separate GitHub OIDC trusted-publishing
 policy.
 
 Third-party NuGet dependencies retain their own licenses and ownership.
-
-## PanAndZoom testing helpers
-
-The 31 C# files under `src/Headless/Avalonia.Headless/Testing` and the imported
-helper tests originate from [PanAndZoom at
-`0c938aa771970ad8e2387f669f910c8b2a2d4d30`](https://github.com/wieslawsoltes/PanAndZoom/tree/0c938aa771970ad8e2387f669f910c8b2a2d4d30/src/HeadlessTestingFramework).
-Copyright (c) Wiesław Šoltés. They are distributed under the MIT license
-in `licence.md`; the upstream [LICENSE.TXT](https://github.com/wieslawsoltes/PanAndZoom/blob/0c938aa771970ad8e2387f669f910c8b2a2d4d30/LICENSE.TXT) grants those terms.
-ProTest organizes these files by feature, retains their
-`Avalonia.HeadlessTestingFramework` namespaces, and includes them in
-`ProTest.Avalonia.Headless`. Recording fixes and compatibility tests are
-maintained here. Documentation adaptations and upstream guide coverage are
-described in [the documentation source inventory](docs/content/attribution/sources.md).

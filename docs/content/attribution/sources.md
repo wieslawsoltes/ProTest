@@ -5,16 +5,6 @@ sidebar_position: 1
 doc-type: reference
 ---
 
-## PanAndZoom helpers and guide
-
-The testing helpers and their original API guide come from [wieslawsoltes/PanAndZoom](https://github.com/wieslawsoltes/PanAndZoom), commit [`0c938aa771970ad8e2387f669f910c8b2a2d4d30`](https://github.com/wieslawsoltes/PanAndZoom/tree/0c938aa771970ad8e2387f669f910c8b2a2d4d30).
-
-- Original code: [`src/HeadlessTestingFramework`](https://github.com/wieslawsoltes/PanAndZoom/tree/0c938aa771970ad8e2387f669f910c8b2a2d4d30/src/HeadlessTestingFramework).
-- Original guide: [`docs/HeadlessTestingAPI.md`](https://github.com/wieslawsoltes/PanAndZoom/blob/0c938aa771970ad8e2387f669f910c8b2a2d4d30/docs/HeadlessTestingAPI.md).
-- Copyright © Wiesław Šoltés. The [MIT notice](panandzoom-license.md) is preserved.
-
-ProTest organizes the guide by input, gestures, tree inspection, automation, and recording. Package instructions target ProTest, and examples are corrected to match the imported APIs. The helpers retain their `Avalonia.HeadlessTestingFramework` namespaces and are compiled into `Avalonia.Headless`.
-
 ## Avalonia testing documentation
 
 This site's navigation and coverage are based on [AvaloniaUI/avalonia-docs](https://github.com/AvaloniaUI/avalonia-docs) at commit [`2c4100e691cf67fc3cb72825b638ae7e3edfb855`](https://github.com/AvaloniaUI/avalonia-docs/tree/2c4100e691cf67fc3cb72825b638ae7e3edfb855). ProTest supplies original, package-specific explanations and examples for these topics:

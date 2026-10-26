@@ -58,7 +58,3 @@ foreach (var difference in result.Differences)
 | `ChildCountMismatch` | Number of children differs |
 | `OrderMismatch` | Child order differs |
 | `NameMismatch` | Control names differ |
-
----
-
-Adapted from the [PanAndZoom headless testing guide](https://github.com/wieslawsoltes/PanAndZoom/blob/0c938aa771970ad8e2387f669f910c8b2a2d4d30/docs/HeadlessTestingAPI.md), copyright © Wiesław Šoltés, [MIT licensed](../../attribution/panandzoom-license.md).
