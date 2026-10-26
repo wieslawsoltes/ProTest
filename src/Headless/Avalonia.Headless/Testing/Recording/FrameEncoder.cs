@@ -345,6 +345,7 @@ public class GifEncoder : IFrameEncoder
     private readonly List<CapturedFrame> _frames = new();
     private readonly List<string> _outputFiles = new();
     private bool _disposed;
+    private bool _finalized;
 
     /// <inheritdoc />
     public RecordingFormat Format => RecordingFormat.Gif;
@@ -358,6 +359,10 @@ public class GifEncoder : IFrameEncoder
     /// <inheritdoc />
     public void Initialize(string outputPath, int width, int height, RecordingOptions options)
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_finalized)
+            throw new InvalidOperationException("Cannot initialize a finalized encoder. Create a new encoder for another recording.");
+
         _outputPath = Path.Combine(outputPath, $"{options.BaseFileName}{FileExtension}");
         _options = options;
 
@@ -371,8 +376,9 @@ public class GifEncoder : IFrameEncoder
     /// <inheritdoc />
     public void EncodeFrame(CapturedFrame frame)
     {
-        if (_disposed)
-            throw new ObjectDisposedException(nameof(GifEncoder));
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_finalized)
+            throw new InvalidOperationException("Cannot add frames after the encoder has been finalized.");
 
         // Store frames for later encoding
         var copy = new CapturedFrame(
@@ -397,15 +403,19 @@ public class GifEncoder : IFrameEncoder
     /// <inheritdoc />
     public void FinalizeEncoding()
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_finalized)
+            return;
         if (_outputPath == null || _options == null)
             throw new InvalidOperationException("Encoder not initialized.");
 
-        if (_frames.Count == 0)
-            return;
-
-        GifAnimationWriter.Write(_outputPath, _frames, _options.FrameRate);
-        if (!_outputFiles.Contains(_outputPath))
+        if (_frames.Count != 0)
+        {
+            GifAnimationWriter.Write(_outputPath, _frames, _options.FrameRate);
             _outputFiles.Add(_outputPath);
+        }
+        // Only complete after a successful write, so an I/O failure can be retried.
+        _finalized = true;
     }
 
     /// <inheritdoc />

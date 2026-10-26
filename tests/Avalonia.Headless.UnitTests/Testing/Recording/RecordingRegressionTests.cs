@@ -79,7 +79,25 @@ public class RecordingRegressionTests : IDisposable
         Assert.Equal(SKCodecResult.Success, codec.GetPixels(decoded.Info, decoded.GetPixels(), new SKCodecOptions(1)));
         Assert.Equal(SKColors.Lime, decoded.GetPixel(39, 29));
         encoder.FinalizeEncoding();
+        await encoder.FinalizeAsync(TestContext.Current.CancellationToken);
         Assert.Single(encoder.OutputFiles);
+        Assert.Throws<InvalidOperationException>(() => encoder.EncodeFrame(red));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => encoder.EncodeFrameAsync(red, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public void Finalizing_An_Empty_Gif_Closes_The_Encoder_Without_Creating_A_File()
+    {
+        using var encoder = new GifEncoder();
+        encoder.Initialize(_directory, 1, 1, RecordingOptions.AnimatedGif);
+        encoder.FinalizeEncoding();
+        encoder.FinalizeEncoding();
+        Assert.Empty(encoder.OutputFiles);
+        Assert.Empty(Directory.GetFiles(_directory));
+        using var frame = SolidFrame(0, 1, 1, 255, 0, 0);
+        Assert.Throws<InvalidOperationException>(() => encoder.EncodeFrame(frame));
+        encoder.Dispose();
+        Assert.Throws<ObjectDisposedException>(() => encoder.FinalizeEncoding());
     }
 
     [Fact]
