@@ -215,21 +215,25 @@ public class RecordingRegressionTests : IDisposable
         try
         {
             window.Show();
-            Dispatcher.UIThread.RunJobs();
+            // Initialize the window's own composition children before attaching
+            // the capture visual; a dispatcher drain can precede the first frame.
+            using var initialFrame = window.CaptureRenderedFrame();
+            Assert.NotNull(initialFrame);
             var root = Assert.IsAssignableFrom<CompositionContainerVisual>(ElementComposition.GetElementVisual(window));
-            var initialCount = root.Children.Count;
             using var capture = new RenderFrameCapture();
             capture.StartCapture(window);
             Dispatcher.UIThread.RunJobs();
-            Assert.Equal(initialCount + 1, root.Children.Count);
+            var captureVisual = Assert.Single(root.Children.OfType<CompositionCustomVisual>());
             capture.StopCapture();
             Dispatcher.UIThread.RunJobs();
-            Assert.Equal(initialCount, root.Children.Count);
+            // Avalonia can independently update its children during rendering.
+            // Verify removal of our exact visual, not the total child count.
+            Assert.DoesNotContain(captureVisual, root.Children);
 
             capture.StartCapture(window);
             capture.StopCapture();
             Dispatcher.UIThread.RunJobs();
-            Assert.Equal(initialCount, root.Children.Count);
+            Assert.Empty(root.Children.OfType<CompositionCustomVisual>());
         }
         finally
         {
