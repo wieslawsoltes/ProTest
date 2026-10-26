@@ -2,8 +2,6 @@
 
 [![CI](https://github.com/wieslawsoltes/ProTest/actions/workflows/ci.yml/badge.svg)](https://github.com/wieslawsoltes/ProTest/actions/workflows/ci.yml)
 [![Documentation](https://github.com/wieslawsoltes/ProTest/actions/workflows/docs.yml/badge.svg)](https://wieslawsoltes.github.io/ProTest/)
-[![NuGet v3](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3)
-[![NuGet v4](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4)
 
 Headless Avalonia UI testing for xUnit 3.x and 4.x, maintained by
 [Wiesław Šoltés](https://github.com/wieslawsoltes).
@@ -35,11 +33,11 @@ runs in-process; real Appium server testing is documented separately.
 
 ## Packages and compatibility
 
-| Package | Purpose | Tested xUnit version | Avalonia version |
-| --- | --- | --- | --- |
-| `ProTest.Avalonia.Headless` | Headless platform, test sessions, and testing helpers | Framework independent | **12.1.4**, exact |
-| `ProTest.Avalonia.Headless.XUnit.v3` | xUnit 3.x adapter | **3.2.2** | **12.1.4**, exact |
-| `ProTest.Avalonia.Headless.XUnit.v4` | xUnit 4.x adapter | **4.0.2** | **12.1.4**, exact |
+| Package | NuGet | Purpose | Tested xUnit version | Avalonia version |
+| --- | --- | --- | --- | --- |
+| `ProTest.Avalonia.Headless` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless) | Headless platform, test sessions, and testing helpers | Framework independent | **12.1.4**, exact |
+| `ProTest.Avalonia.Headless.XUnit.v3` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3) | xUnit 3.x adapter | **3.2.2** | **12.1.4**, exact |
+| `ProTest.Avalonia.Headless.XUnit.v4` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4) | xUnit 4.x adapter | **4.0.2** | **12.1.4**, exact |
 
 All three packages target **.NET 8 and .NET 10**. Their initial version is
 **12.1.4**, aligned with Avalonia. New Avalonia versions require a tested
