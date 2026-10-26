@@ -224,6 +224,8 @@ def package_tests(configuration: str, frameworks: list[str], version: dict[str, 
             "NUGET_PACKAGES": str(temporary_root / "packages"),
             "MSBUILDDISABLENODEREUSE": "1",
             "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+            # Avalonia's background build collector inherits the project directory.
+            "AVALONIA_TELEMETRY_OPTOUT": "1",
         })
         properties = ["-p:UseSharedCompilation=false", f"-p:ProTestVersion={version['Version']}"] + [
             f"-p:{name}={value}" for name, value in version.items() if name != "Version"
