@@ -1,0 +1,33 @@
+<Project>
+  <Import Project="../Directory.Build.props" />
+  <Import Project="../build/AvaloniaPublicKey.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <Authors>Wiesław Šoltés;Avalonia Team</Authors>
+    <Owners>wieslawsoltes</Owners>
+    <Company>Wiesław Šoltés</Company>
+    <Product>ProTest</Product>
+    <Copyright>Copyright © AvaloniaUI contributors and Wiesław Šoltés</Copyright>
+    <PackageProjectUrl>https://github.com/wieslawsoltes/ProTest</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/wieslawsoltes/ProTest</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>avalonia;headless;testing;xunit;protest</PackageTags>
+    <PackageReleaseNotes>https://github.com/wieslawsoltes/ProTest/releases</PackageReleaseNotes>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)../build/avalonia.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="/" />
+    <None Include="$(MSBuildThisFileDirectory)../licence.md" Pack="true" PackagePath="/" />
+    <None Include="$(MSBuildThisFileDirectory)../NOTICE.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+</Project>

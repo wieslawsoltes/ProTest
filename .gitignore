@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+**/TestResults/
+.vs/
+.idea/
+*.user
+.DS_Store
+__pycache__/
+*.pyc
