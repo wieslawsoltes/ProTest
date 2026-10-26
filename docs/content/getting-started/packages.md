@@ -11,7 +11,9 @@ doc-type: how-to
 | `ProTest.Avalonia.Headless.XUnit.v3` | Headless package and xUnit 3 adapter | 3.2.2, constrained to 3.x | Exactly 12.1.4 |
 | `ProTest.Avalonia.Headless.XUnit.v4` | Headless package and xUnit 4 adapter | 4.0.2, constrained to 4.x | Exactly 12.1.4 |
 
-All packages have version **12.1.4** and contain `net8.0` and `net10.0` assets. Install an adapter to receive the headless package transitively; install only the headless package for manual sessions or another test harness.
+All packages have preview version **12.1.4-preview.1** and contain `net8.0` and `net10.0` assets. Install an adapter to receive the headless package transitively; install only the headless package for manual sessions or another test harness.
+
+Enable prerelease packages in your NuGet package manager, or specify the exact preview version in the project file. Official Avalonia dependencies remain at the stable **12.1.4** release.
 
 ## Names and namespaces
 
