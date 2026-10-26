@@ -43,7 +43,7 @@ The workflow grants `id-token: write` only to the publishing job. `NuGet/login` 
 
 1. Update `build/Version.props`. Keep `AvaloniaVersion` pinned to the official Avalonia release against which the private API integration has been verified; the ProTest package version begins with the same Avalonia version. Use a prerelease suffix or a fourth version component when publishing subsequent ProTest builds against the same Avalonia release. After changing dependency versions, run `dotnet restore ProTest.slnx --force-evaluate` and commit the updated lock files; CI restores the source solution in locked mode.
 2. Run `python scripts/build.py`. This requires the .NET 10 SDK and .NET 8 and 10 runtimes. The script writes packages to `artifacts/packages` and test results to `artifacts/test-results`.
-3. Commit and push the reviewed changes. Tag that commit with `v` followed by the exact `Version` value from `build/Version.props`, then push the tag. For example, a `Version` of `12.1.4-preview.1` requires `v12.1.4-preview.1`.
+3. Commit and push the reviewed changes. Tag that commit with `v` followed by the exact `Version` value from `build/Version.props`, then push the tag. For example, a `Version` of `12.1.4` requires `v12.1.4`.
 4. The **Release** workflow checks the version, reruns the full CI matrix, and publishes the validated `.nupkg` and accompanying `.snupkg` files. Approve the `nuget` environment deployment if you configured required reviewers.
 5. After NuGet publishing succeeds, a separate job creates a GitHub release with generated notes and attaches those same packages and symbols. Version tags containing a hyphen produce GitHub prereleases. Only this job receives `contents: write`; it receives no NuGet credential or OIDC permission.
 
@@ -62,7 +62,7 @@ python scripts/build.py --framework net10.0
 python scripts/build.py --package-tests-only --framework net10.0
 
 # Validate a proposed release tag without building or publishing.
-python scripts/build.py --check-tag v12.1.4-preview.1
+python scripts/build.py --check-tag v12.1.4
 ```
 
 CI and release configuration are committed to this repository. Creating the GitHub environment, setting `NUGET_USER`, and registering the NuGet.org policy are account-level setup steps; building the repository does not perform them.
