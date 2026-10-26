@@ -2,7 +2,7 @@
   <!-- Intentionally self-contained: CI copies this tree outside the repository. -->
   <PropertyGroup>
     <XunitRunnerPackage Condition="'$(XunitRunnerPackage)' == ''">xunit.v3.mtp-off</XunitRunnerPackage>
-    <ProTestVersion Condition="'$(ProTestVersion)' == ''">12.1.4-preview.1</ProTestVersion>
+    <ProTestVersion Condition="'$(ProTestVersion)' == ''">12.1.4</ProTestVersion>
     <AvaloniaVersion Condition="'$(AvaloniaVersion)' == ''">12.1.4</AvaloniaVersion>
     <XunitV3Version Condition="'$(XunitV3Version)' == ''">3.2.2</XunitV3Version>
     <XunitV4Version Condition="'$(XunitV4Version)' == ''">4.0.2</XunitV4Version>
