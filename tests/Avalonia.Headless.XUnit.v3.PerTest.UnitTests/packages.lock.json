@@ -254,7 +254,7 @@
       "ProTest.Avalonia.Headless.XUnit.v3": {
         "type": "Project",
         "dependencies": {
-          "ProTest.Avalonia.Headless": "[12.1.4, )",
+          "ProTest.Avalonia.Headless": "[12.1.4-preview.1, )",
           "xunit.v3.extensibility.core": "[3.2.2, 4.0.0)"
         }
       }
@@ -512,7 +512,7 @@
       "ProTest.Avalonia.Headless.XUnit.v3": {
         "type": "Project",
         "dependencies": {
-          "ProTest.Avalonia.Headless": "[12.1.4, )",
+          "ProTest.Avalonia.Headless": "[12.1.4-preview.1, )",
           "xunit.v3.extensibility.core": "[3.2.2, 4.0.0)"
         }
       }

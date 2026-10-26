@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- Keep the package release aligned with the exact Avalonia version tested. -->
-    <Version>12.1.4</Version>
+    <Version>12.1.4-preview.1</Version>
     <AvaloniaVersion>12.1.4</AvaloniaVersion>
     <XunitV3Version>3.2.2</XunitV3Version>
     <!-- xUnit 4.x retains the xunit.v3.* NuGet package names. -->
