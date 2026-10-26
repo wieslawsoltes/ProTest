@@ -1,0 +1,37 @@
+{
+  "name": "protest-docs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prestart": "node scripts/prepare-content.mjs",
+    "start": "docusaurus start",
+    "prebuild": "node scripts/prepare-content.mjs",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@easyops-cn/docusaurus-search-local": "0.55.3",
+    "@mdx-js/react": "3.1.1",
+    "prism-react-renderer": "2.4.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "overrides": {
+    "postcss-selector-parser": "7.1.7",
+    "serialize-javascript": "7.1.4",
+    "tinypool": "2.2.0",
+    "sockjs": {
+      "uuid": "11.1.1"
+    }
+  },
+  "browserslist": {
+    "production": [">0.5%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  }
+}
