@@ -1,6 +1,7 @@
 # ProTest
 
 [![CI](https://github.com/wieslawsoltes/ProTest/actions/workflows/ci.yml/badge.svg)](https://github.com/wieslawsoltes/ProTest/actions/workflows/ci.yml)
+[![Documentation](https://github.com/wieslawsoltes/ProTest/actions/workflows/docs.yml/badge.svg)](https://wieslawsoltes.github.io/ProTest/)
 [![NuGet v3](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3)
 [![NuGet v4](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4)
 
@@ -12,11 +13,31 @@ standalone solution, adds an adapter for xUnit 4.x, and builds against
 **official Avalonia NuGet packages**. No Avalonia checkout, private feed,
 or developer signing secret is required.
 
+**[Read the documentation](https://wieslawsoltes.github.io/ProTest/)** for setup,
+headless testing, xUnit integration, input simulation, tree inspection,
+Appium-style automation, and recording.
+
+## Testing helpers
+
+`ProTest.Avalonia.Headless` also includes the testing helpers from PanAndZoom:
+
+- Mouse, keyboard, touch, and multi-touch simulation.
+- Gesture recognizer helpers and scripted gestures.
+- Visual and logical tree queries, XPath-like selectors, validation, and comparison.
+- An in-process Appium-style driver with locators, actions, and waits.
+- Frame capture, image sequences, recording sessions, and optional FFmpeg video conversion.
+
+The source is organized under `src/Headless/Avalonia.Headless/Testing`.
+Existing `Avalonia.HeadlessTestingFramework`, `.Appium`, and `.Recording`
+namespaces are preserved. These APIs ship in the headless package and require
+no separate `HeadlessTestingFramework` project reference. The Appium-style API
+runs in-process; real Appium server testing is documented separately.
+
 ## Packages and compatibility
 
 | Package | Purpose | Tested xUnit version | Avalonia version |
 | --- | --- | --- | --- |
-| `ProTest.Avalonia.Headless` | Headless platform and test sessions | Framework independent | **12.1.4**, exact |
+| `ProTest.Avalonia.Headless` | Headless platform, test sessions, and testing helpers | Framework independent | **12.1.4**, exact |
 | `ProTest.Avalonia.Headless.XUnit.v3` | xUnit 3.x adapter | **3.2.2** | **12.1.4**, exact |
 | `ProTest.Avalonia.Headless.XUnit.v4` | xUnit 4.x adapter | **4.0.2** | **12.1.4**, exact |
 
