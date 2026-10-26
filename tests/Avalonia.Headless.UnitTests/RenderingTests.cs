@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Rendering.Composition;
-using Avalonia.Threading;
 
 namespace Avalonia.Headless.UnitTests;
 
@@ -159,15 +158,25 @@ public class RenderingTests
         };
 
         window.Show();
+        try
+        {
+            // A dispatcher drain alone can precede the first render timer tick.
+            // Render a frame so the visual is attached to its composition target
+            // before requesting a snapshot (required by Avalonia 12.1.4).
+            using var initialFrame = window.CaptureRenderedFrame();
+            AssertHelper.NotNull(initialFrame);
 
-        Dispatcher.UIThread.RunJobs();
+            var compositionVisual = ElementComposition.GetElementVisual(window)!;
+            using var snapshot = await compositionVisual.Compositor.CreateCompositionVisualSnapshot(compositionVisual, 1);
 
-        var compositionVisual = ElementComposition.GetElementVisual(window)!;
-        var snapshot = await compositionVisual.Compositor.CreateCompositionVisualSnapshot(compositionVisual, 1);
-
-        AssertHelper.NotNull(snapshot);
-        AssertHelper.Equal(100, snapshot.Size.Width);
-        AssertHelper.Equal(100, snapshot.Size.Height);
+            AssertHelper.NotNull(snapshot);
+            AssertHelper.Equal(100, snapshot.Size.Width);
+            AssertHelper.Equal(100, snapshot.Size.Height);
+        }
+        finally
+        {
+            window.Close();
+        }
     }
 
 #if NUNIT
