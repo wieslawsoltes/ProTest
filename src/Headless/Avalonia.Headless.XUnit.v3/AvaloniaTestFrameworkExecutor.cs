@@ -8,6 +8,11 @@ internal sealed class AvaloniaTestFrameworkExecutor(IXunitTestAssembly testAssem
 {
     private readonly HeadlessUnitTestSession _session = HeadlessUnitTestSession.GetOrStartForAssembly(testAssembly.Assembly);
 
+#if !XUNIT_V4
+    protected override ITestFrameworkDiscoverer CreateDiscoverer()
+        => new AvaloniaTestFrameworkDiscoverer(TestAssembly);
+#endif
+
     public override async ValueTask DisposeAsync()
     {
         await _session.DisposeAsync();

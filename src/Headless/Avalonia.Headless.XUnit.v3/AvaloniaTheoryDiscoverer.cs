@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -17,14 +17,24 @@ public class AvaloniaTheoryDiscoverer : TheoryDiscoverer
         IXunitTestMethod testMethod,
         ITheoryAttribute theoryAttribute,
         ITheoryDataRow dataRow,
+#if XUNIT_V4
+        object?[] testMethodArguments,
+        string? index)
+#else
         object?[] testMethodArguments)
+#endif
     {
         var details = TestIntrospectionHelper.GetTestCaseDetailsForTheoryDataRow(
             discoveryOptions,
             testMethod,
             theoryAttribute,
             dataRow,
+#if XUNIT_V4
+            testMethodArguments,
+            index);
+#else
             testMethodArguments);
+#endif
         var traits = TestIntrospectionHelper.GetTraits(testMethod, dataRow);
 
         var testCase = new AvaloniaTestCase(
@@ -41,7 +51,13 @@ public class AvaloniaTheoryDiscoverer : TheoryDiscoverer
             testMethodArguments,
             sourceFilePath: details.SourceFilePath,
             sourceLineNumber: details.SourceLineNumber,
+#if XUNIT_V4
+            timeout: details.Timeout,
+            testLabel: dataRow.Label,
+            disableParallelization: dataRow.DisableParallelization ?? false);
+#else
             timeout: details.Timeout);
+#endif
 
         return ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([testCase]);
     }

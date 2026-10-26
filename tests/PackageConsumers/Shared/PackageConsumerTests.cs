@@ -123,6 +123,14 @@ public sealed class PackageConsumerTests : IAsyncLifetime, IClassFixture<Consume
         // Avalonia's published friend assembly grants require the original strong-name identity.
         Assert.Equal("c8d484a7012f9a8b", Convert.ToHexString(headless.GetPublicKeyToken()!).ToLowerInvariant());
         Assert.Equal("Avalonia.Controls", typeof(Window).Assembly.GetName().Name);
+
+        var adapter = typeof(AvaloniaFactAttribute).Assembly.GetName();
+#if XUNIT_V4
+        Assert.Equal("Avalonia.Headless.XUnit.v4", adapter.Name);
+#else
+        Assert.Equal("Avalonia.Headless.XUnit.v3", adapter.Name);
+#endif
+        Assert.Equal("Avalonia.Headless.XUnit", typeof(AvaloniaFactAttribute).Namespace);
     }
 
     public async ValueTask DisposeAsync()

@@ -6,7 +6,7 @@
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
     <Nullable>disable</Nullable>
-    <DefineConstants>$(DefineConstants);XUNIT;PERTEST</DefineConstants>
+    <DefineConstants>$(DefineConstants);XUNIT</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-off" Version="$(XunitV3Version)" />
@@ -17,6 +17,6 @@
     <PackageReference Include="Avalonia.Skia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
     <Compile Include="../Avalonia.Headless.UnitTests/**/*.cs" />
-    <ProjectReference Include="../../src/Headless/Avalonia.Headless.XUnit/Avalonia.Headless.XUnit.csproj" />
+    <ProjectReference Include="../../src/Headless/Avalonia.Headless.XUnit.v3/Avalonia.Headless.XUnit.v3.csproj" />
   </ItemGroup>
 </Project>

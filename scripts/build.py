@@ -21,7 +21,7 @@ PACKAGES = ROOT / "artifacts" / "packages"
 RESULTS = ROOT / "artifacts" / "test-results"
 EXPECTED_PACKAGES = {
     "ProTest.Avalonia.Headless": "Avalonia.Headless.dll",
-    "ProTest.Avalonia.Headless.XUnit": "Avalonia.Headless.XUnit.dll",
+    "ProTest.Avalonia.Headless.XUnit.v3": "Avalonia.Headless.XUnit.v3.dll",
     "ProTest.Avalonia.Headless.XUnit.v4": "Avalonia.Headless.XUnit.v4.dll",
 }
 
@@ -155,7 +155,7 @@ def validate_failure_probe(result: Path) -> None:
 
 
 def source_tests(configuration: str, frameworks: list[str]) -> None:
-    projects = sorted((ROOT / "tests").glob("Avalonia.Headless.XUnit*.UnitTests/*.csproj"))
+    projects = sorted((ROOT / "tests").glob("Avalonia.Headless.XUnit.v[34].*.UnitTests/*.csproj"))
     if len(projects) != 4:
         raise RuntimeError(f"Expected four source test projects, found {len(projects)}")
     for project in projects:

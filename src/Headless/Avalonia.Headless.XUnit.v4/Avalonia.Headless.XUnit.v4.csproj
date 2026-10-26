@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <DefineConstants>$(DefineConstants);XUNIT_V4</DefineConstants>
     <RootNamespace>Avalonia.Headless.XUnit</RootNamespace>
     <IsTestProject>false</IsTestProject>
     <IsPackable>true</IsPackable>
@@ -10,5 +11,21 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3.extensibility.core" Version="[$(XunitV4Version),5.0.0)" />
     <ProjectReference Include="..\Avalonia.Headless\Avalonia.Headless.csproj" />
+  </ItemGroup>
+
+  <!-- Common adapter behavior is compiled from the v3 sources.
+       Execution entry points and runner contexts remain version-specific. -->
+  <ItemGroup>
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaDelayEnumeratedTheoryTestCase.cs" Link="AvaloniaDelayEnumeratedTheoryTestCase.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaFact.cs" Link="AvaloniaFact.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaFactDiscoverer.cs" Link="AvaloniaFactDiscoverer.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTestCase.cs" Link="AvaloniaTestCase.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTestFramework.cs" Link="AvaloniaTestFramework.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTestFrameworkAttribute.cs" Link="AvaloniaTestFrameworkAttribute.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTestFrameworkDiscoverer.cs" Link="AvaloniaTestFrameworkDiscoverer.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTestFrameworkExecutor.cs" Link="AvaloniaTestFrameworkExecutor.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTestRunner.Shared.cs" Link="AvaloniaTestRunner.Shared.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTheoryAttribute.cs" Link="AvaloniaTheoryAttribute.cs" />
+    <Compile Include="../Avalonia.Headless.XUnit.v3/AvaloniaTheoryDiscoverer.cs" Link="AvaloniaTheoryDiscoverer.cs" />
   </ItemGroup>
 </Project>

@@ -251,7 +251,7 @@
           "Avalonia.HarfBuzz": "[12.1.4, 12.1.4]"
         }
       },
-      "ProTest.Avalonia.Headless.XUnit": {
+      "ProTest.Avalonia.Headless.XUnit.v3": {
         "type": "Project",
         "dependencies": {
           "ProTest.Avalonia.Headless": "[12.1.4, )",
@@ -509,7 +509,7 @@
           "Avalonia.HarfBuzz": "[12.1.4, 12.1.4]"
         }
       },
-      "ProTest.Avalonia.Headless.XUnit": {
+      "ProTest.Avalonia.Headless.XUnit.v3": {
         "type": "Project",
         "dependencies": {
           "ProTest.Avalonia.Headless": "[12.1.4, )",
