@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="ProTest.Avalonia.Headless.XUnit" Version="$(ProTestVersion)" />
+    <PackageReference Include="$(XunitRunnerPackage)" Version="$(XunitV3Version)" />
+  </ItemGroup>
+</Project>
