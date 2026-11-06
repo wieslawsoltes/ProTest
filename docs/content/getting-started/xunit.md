@@ -18,7 +18,7 @@ Create a directory for your tests and save this as `Tests.csproj`. This example 
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ProTest.Avalonia.Headless.XUnit.v4" Version="12.1.4" />
+    <PackageReference Include="ProTest.Avalonia.Headless.XUnit.v4" Version="12.1.5" />
     <PackageReference Include="xunit.v3.mtp-off" Version="4.0.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
@@ -26,7 +26,7 @@ Create a directory for your tests and save this as `Tests.csproj`. This example 
 </Project>
 ```
 
-For **xUnit 3**, use `ProTest.Avalonia.Headless.XUnit.v3` version `12.1.4` and `xunit.v3.mtp-off` version `3.2.2`. Set the target framework to `net8.0` if your tests run on .NET 8. Both versions support the same attributes and application setup.
+For **xUnit 3**, use `ProTest.Avalonia.Headless.XUnit.v3` version `12.1.5` and `xunit.v3.mtp-off` version `3.2.2`. Set the target framework to `net8.0` if your tests run on .NET 8. Both versions support the same attributes and application setup.
 
 ## Configure the application
 
@@ -100,7 +100,7 @@ Use `[AvaloniaFact]` and `[AvaloniaTheory]` for controls, layout, binding, input
 
 ## Add application themes
 
-Template-dependent controls need the theme used by your application. Add `Avalonia.Themes.Fluent` at `12.1.4` and configure an application class:
+Template-dependent controls need the theme used by your application. Add `Avalonia.Themes.Fluent` at `12.1.5` and configure an application class:
 
 ```csharp
 using Avalonia;

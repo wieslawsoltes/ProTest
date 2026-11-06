@@ -22,6 +22,6 @@ Start with the [xUnit quick start](getting-started/xunit.md), then choose the AP
 | Run the suite in a build pipeline | [CI and containers](guides/ci.md) |
 | Release ProTest packages | [Publishing](reference/publishing.md) |
 
-The packages target **.NET 8 and .NET 10**, with official **Avalonia 12.1.4** dependencies. The original C# namespaces are retained. Select one xUnit adapter per test project.
+The packages target **.NET 8 and .NET 10**, with official **Avalonia 12.1.5** dependencies. The original C# namespaces are retained. Select one xUnit adapter per test project.
 
 This documentation follows Avalonia's task-oriented organization: getting started, practical guides, and API reference. The [source inventory](attribution/sources.md) records the upstream guides and commits used for this edition.

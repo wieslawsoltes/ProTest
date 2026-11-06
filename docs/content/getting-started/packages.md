@@ -7,13 +7,13 @@ doc-type: how-to
 
 | Package | Includes | xUnit dependency | Avalonia |
 | --- | --- | --- | --- |
-| `ProTest.Avalonia.Headless` | Platform, sessions, input, trees, automation, recording | None | Exactly 12.1.4 |
-| `ProTest.Avalonia.Headless.XUnit.v3` | Headless package and xUnit 3 adapter | 3.2.2, constrained to 3.x | Exactly 12.1.4 |
-| `ProTest.Avalonia.Headless.XUnit.v4` | Headless package and xUnit 4 adapter | 4.0.2, constrained to 4.x | Exactly 12.1.4 |
+| `ProTest.Avalonia.Headless` | Platform, sessions, input, trees, automation, recording | None | Exactly 12.1.5 |
+| `ProTest.Avalonia.Headless.XUnit.v3` | Headless package and xUnit 3 adapter | 3.2.2, constrained to 3.x | Exactly 12.1.5 |
+| `ProTest.Avalonia.Headless.XUnit.v4` | Headless package and xUnit 4 adapter | 4.0.2, constrained to 4.x | Exactly 12.1.5 |
 
-All packages have stable version **12.1.4** and contain `net8.0` and `net10.0` assets. Install an adapter to receive the headless package transitively; install only the headless package for manual sessions or another test harness.
+All packages have stable version **12.1.5** and contain `net8.0` and `net10.0` assets. Install an adapter to receive the headless package transitively; install only the headless package for manual sessions or another test harness.
 
-Official Avalonia dependencies are pinned to the stable **12.1.4** release.
+Official Avalonia dependencies are pinned to the stable **12.1.5** release.
 
 ## Names and namespaces
 
@@ -33,7 +33,7 @@ The upstream helper namespace remains available after moving from the separate `
 1. Remove direct references to official `Avalonia.Headless` and `Avalonia.Headless.XUnit`, and the old standalone `HeadlessTestingFramework` project/package.
 2. Add exactly one ProTest xUnit adapter and the matching xUnit runner package from the [quick start](xunit.md).
 3. Keep existing `using Avalonia.Headless`, `using Avalonia.Headless.XUnit`, and helper namespace imports.
-4. Align other Avalonia references, including themes, Skia, and application projects, to **12.1.4**.
+4. Align other Avalonia references, including themes, Skia, and application projects, to **12.1.5**.
 5. Rebuild and run tests with the selected runner.
 
 The xUnit framework's 4.x releases still use NuGet names beginning `xunit.v3` and namespaces `Xunit` / `Xunit.v3`. The ProTest `.v4` suffix selects the adapter for those releases.
