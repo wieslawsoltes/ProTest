@@ -15,6 +15,43 @@ All packages have stable version **12.1.5** and contain `net8.0` and `net10.0` a
 
 Official Avalonia dependencies are pinned to the stable **12.1.5** release.
 
+## Central Package Management and desktop applications
+
+Keep the application and its ProTest test project on the same Avalonia patch.
+For example, use these entries in `Directory.Packages.props`:
+
+```xml
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.5" />
+    <PackageVersion Include="ProTest.Avalonia.Headless.XUnit.v4" Version="12.1.5" />
+  </ItemGroup>
+</Project>
+```
+
+These entries select versions for the corresponding `PackageReference` items;
+keep the other package entries required by the [xUnit setup](xunit.md).
+Use `.v3` instead of `.v4` for the xUnit 3 adapter.
+
+An explicit `Avalonia.HarfBuzz` override is not needed to reconcile Desktop
+and ProTest when their versions match. Remove a central HarfBuzz entry added
+only as a workaround. If your project directly references HarfBuzz, keep its
+central entry at the same Avalonia version.
+
+Mixing Desktop 12.1.5 with ProTest 12.1.4 can produce `NU1608` dependency
+constraint warnings. Pinning only HarfBuzz does not resolve the underlying
+Avalonia mismatch. Update ProTest alongside the application's Avalonia
+packages; do not suppress the warning or force newer private APIs through
+the older ProTest package. If no matching ProTest release is available yet,
+keep the application and tests on the last supported Avalonia patch.
+
+Release validation restores and runs Desktop consumers with Central Package
+Management and transitive pinning enabled, without a direct HarfBuzz reference
+or override. `NU1605` and `NU1608` fail that validation.
+
 ## Names and namespaces
 
 | Code | Namespace | Assembly |

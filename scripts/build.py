@@ -99,8 +99,8 @@ def validate_packages(version: str, avalonia_version: str) -> None:
                 dependency_id = dependency.attrib["id"]
                 if dependency_id == "Avalonia.Headless":
                     raise RuntimeError("Must depend on ProTest.Avalonia.Headless, not the official headless package")
-                if dependency_id == "Avalonia" and dependency.attrib.get("version") != f"[{avalonia_version}]":
-                    raise RuntimeError("Avalonia's private API dependency must be pinned to an exact version")
+                if dependency_id in ("Avalonia", "Avalonia.Fonts.Inter", "Avalonia.HarfBuzz") and dependency.attrib.get("version") != f"[{avalonia_version}]":
+                    raise RuntimeError(f"{dependency_id} must be pinned to the tested Avalonia version [{avalonia_version}]")
             if package_id != "ProTest.Avalonia.Headless" and not any(
                 dependency.attrib["id"] == "ProTest.Avalonia.Headless" for dependency in dependencies
             ):
@@ -193,6 +193,60 @@ def mtp_package_tests(consumers: Path, nuget_config: Path, environment: dict,
                 validate_trx_results(result, "Microsoft.Testing.Platform")
 
 
+def desktop_cpm_package_tests(consumers: Path, nuget_config: Path, environment: dict,
+                              configuration: str, frameworks: list[str], properties: list[str],
+                              avalonia_version: str) -> None:
+    # Model a desktop app's centrally managed dependency graph without a direct
+    # HarfBuzz override hiding conflicts between Desktop and ProTest.
+    desktop_consumers = consumers.with_name("consumers-desktop-cpm")
+    shutil.copytree(consumers, desktop_consumers, ignore=shutil.ignore_patterns("bin", "obj", "TestResults"))
+    props_path = desktop_consumers / "Directory.Build.props"
+    props = ET.parse(props_path)
+    props.find(".//ManagePackageVersionsCentrally").text = "true"
+    group = props.find("PropertyGroup")
+    ET.SubElement(group, "CentralPackageTransitivePinningEnabled").text = "true"
+    ET.SubElement(group, "WarningsAsErrors").text = "$(WarningsAsErrors);NU1605;NU1608"
+    for group in props.findall("ItemGroup"):
+        for reference in list(group.findall("PackageReference")):
+            if reference.get("Include") in ("Avalonia", "Avalonia.Skia", "Avalonia.HarfBuzz"):
+                group.remove(reference)
+    group = ET.SubElement(props.getroot(), "ItemGroup")
+    ET.SubElement(group, "PackageReference", Include="Avalonia.Desktop", Version="$(AvaloniaVersion)")
+    props.write(props_path, encoding="utf-8", xml_declaration=True)
+
+    central = ET.Element("Project")
+    versions_group = ET.SubElement(central, "ItemGroup")
+    for path in [props_path, *sorted(desktop_consumers.glob("*/*.csproj"))]:
+        document = ET.parse(path)
+        for reference in document.findall(".//PackageReference"):
+            package_version = reference.attrib.pop("Version")
+            # Each adapter uses a different xUnit version, even though both
+            # versions use the same NuGet package name.
+            attributes = {"Include": reference.attrib["Include"], "Version": package_version}
+            if path.suffix == ".csproj":
+                attributes["Condition"] = f"'$(MSBuildProjectName)' == '{path.stem}'"
+            ET.SubElement(versions_group, "PackageVersion", **attributes)
+        document.write(path, encoding="utf-8", xml_declaration=True)
+    ET.ElementTree(central).write(desktop_consumers / "Directory.Packages.props", encoding="utf-8", xml_declaration=True)
+
+    for project in sorted(desktop_consumers.glob("*/*.csproj")):
+        xml_option = "-result-xml" if ".v4" in project.stem.lower() else "-xml"
+        for framework in frameworks:
+            framework_property = f"-p:TestTargetFramework={framework}"
+            run("dotnet", "restore", project, "--configfile", nuget_config,
+                framework_property, *properties, cwd=desktop_consumers, env=environment)
+            assets = json.loads((project.parent / "obj" / "project.assets.json").read_text())
+            for package_id in ("Avalonia", "Avalonia.Desktop", "Avalonia.HarfBuzz", "Avalonia.Fonts.Inter"):
+                if f"{package_id}/{avalonia_version}" not in assets["libraries"]:
+                    raise RuntimeError(f"Desktop CPM consumer did not resolve {package_id} {avalonia_version}")
+            result = RESULTS / f"{project.stem}-{framework}-desktop-cpm.xml"
+            result.unlink(missing_ok=True)
+            run("dotnet", "run", "--project", project, "--configuration", configuration,
+                "--no-restore", framework_property, *properties, "--", xml_option, result,
+                cwd=desktop_consumers, env=environment, timeout=180)
+            validate_test_results(result)
+
+
 def package_tests(configuration: str, frameworks: list[str], version: dict[str, str]) -> None:
     # A temporary directory outside the checkout prevents accidental imports of
     # repository props, linked source files, signing keys, and project references.
@@ -233,6 +287,8 @@ def package_tests(configuration: str, frameworks: list[str], version: dict[str, 
         projects = sorted(consumers.glob("*/*.csproj"))
         if len(projects) != 2:
             raise RuntimeError("Expected separate v3 and v4 package consumers")
+        desktop_cpm_package_tests(consumers, nuget_config, environment, configuration,
+                                  frameworks, properties, version["AvaloniaVersion"])
         mtp_package_tests(consumers, nuget_config, environment, configuration, frameworks, properties)
         for project in projects:
             xml_option = "-result-xml" if ".v4" in project.stem.lower() else "-xml"

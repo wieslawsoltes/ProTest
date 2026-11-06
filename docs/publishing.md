@@ -4,6 +4,8 @@ The release workflow publishes the exact packages validated by the Linux CI job 
 
 The release contains `ProTest.Avalonia.Headless`, `ProTest.Avalonia.Headless.XUnit.v3`, and `ProTest.Avalonia.Headless.XUnit.v4`, plus their symbol packages.
 
+Package validation also tests `Avalonia.Desktop` consumers with Central Package Management and transitive pinning enabled. These consumers have no direct HarfBuzz reference or central override, and restore fails on `NU1605` or `NU1608`. This checks that the release can be consumed alongside the matching desktop packages without a dependency workaround.
+
 ## Repository configuration
 
 The following GitHub settings were configured and verified for `wieslawsoltes/ProTest` on October 26, 2026:

@@ -56,6 +56,12 @@ Remove official `Avalonia.Headless` / `Avalonia.Headless.XUnit` package
 references when migrating: ProTest supplies those types and assembly identities.
 Keep other Avalonia packages, such as themes and Skia, at version **12.1.5**.
 
+For Central Package Management, update ProTest alongside `Avalonia.Desktop`.
+Matching versions do not need a separate HarfBuzz override. A mixed-patch
+`NU1608` warning means the packages are outside the tested dependency
+constraints; overriding HarfBuzz alone does not resolve the Avalonia mismatch.
+See the [central package setup](https://wieslawsoltes.github.io/ProTest/getting-started/packages#central-package-management-and-desktop-applications).
+
 ## Quick start
 
 Create a test project with the following project file. This example uses
@@ -297,6 +303,8 @@ only the local package feed and NuGet.org, with an isolated package cache.
 Both attribute-based and assembly-wide integration run through the native
 xUnit runner and VSTest. Separate failure probes verify nonzero exits and
 exception reporting; ordinary test runs reject failures and runner errors.
+Desktop consumers also exercise Central Package Management with transitive
+pinning and no direct HarfBuzz override, treating dependency conflicts as errors.
 
 Packages are written to `artifacts/packages`. Publishing uses GitHub OIDC
 and NuGet trusted publishing. Configure the NuGet policy, GitHub environment,
