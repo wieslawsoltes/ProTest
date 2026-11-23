@@ -8,7 +8,7 @@ Package validation also tests `Avalonia.Desktop` consumers with Central Package 
 
 ## Repository configuration
 
-The following GitHub settings were configured and verified for `wieslawsoltes/ProTest` on October 26, 2026:
+The `wieslawsoltes/ProTest` release workflow uses these GitHub settings.
 
 | Setting | Value |
 | --- | --- |
@@ -27,17 +27,20 @@ These steps describe how to reproduce or update the configuration, including for
 1. Sign in to the NuGet.org account that should own the packages. The repository metadata credits **Wiesław Šoltés**; NuGet.org ownership is established by the publishing account and cannot be assigned through a `.csproj` or `.nuspec` field.
 2. Add a GitHub Actions environment named `nuget` to the repository. Select deployment branches and tags, then add a **tag** rule for `v*` to match the release workflow. The ProTest configuration has no required reviewer or wait timer; add those only if your release process needs them.
 3. Add the GitHub Actions variable `NUGET_USER` at repository level or in the `nuget` environment. Use your NuGet.org **profile username**, not an email address. ProTest uses `wieslawsoltes` in the `nuget` environment. No long-lived API key secret is needed.
-4. In NuGet.org, open your account's **Trusted Publishing** settings and add a GitHub policy with these values:
+4. On NuGet.org, open **Trusted Publishing** from your account menu. Check the existing GitHub policy for this repository or create one with these values.
 
    | Setting | Value |
    | --- | --- |
+   | Policy name for a new policy | `ProTest release` |
+   | Package owner | `wieslawsoltes` |
    | Repository owner | `wieslawsoltes` |
    | Repository | `ProTest` |
    | Workflow file | `release.yml` |
    | Environment | `nuget` |
-   | Package pattern | `ProTest.*` |
+   | Scope for the existing packages | Push only new package versions |
+   | Glob pattern | `ProTest.*` |
 
-   Select the intended package owner and grant the scopes for creating new packages and publishing new versions. Enter only `release.yml` in the workflow field, without `.github/workflows/`.
+   Enter the workflow filename exactly as shown. The release job uses the `nuget` environment when it requests an OIDC token.
 
 The workflow grants `id-token: write` only to the publishing job. `NuGet/login` exchanges the GitHub OIDC token for a short-lived NuGet key immediately before publishing. The key is passed through an environment variable and is not stored in the repository. See Microsoft's [trusted publishing documentation](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing) and the official [NuGet/login action](https://github.com/NuGet/login).
 
@@ -45,7 +48,7 @@ The workflow grants `id-token: write` only to the publishing job. `NuGet/login` 
 
 1. Update `build/Version.props`. Keep `AvaloniaVersion` pinned to the official Avalonia release against which the private API integration has been verified; the ProTest package version begins with the same Avalonia version. Use a prerelease suffix or a fourth version component when publishing subsequent ProTest builds against the same Avalonia release. After changing dependency versions, run `dotnet restore ProTest.slnx --force-evaluate` and commit the updated lock files; CI restores the source solution in locked mode.
 2. Run `python scripts/build.py`. This requires the .NET 10 SDK and .NET 8 and 10 runtimes. The script writes packages to `artifacts/packages` and test results to `artifacts/test-results`.
-3. Commit and push the reviewed changes. Tag that commit with `v` followed by the exact `Version` value from `build/Version.props`, then push the tag. For example, a `Version` of `12.1.5` requires `v12.1.5`.
+3. Commit and push the reviewed changes. Tag that commit with `v` followed by the exact `Version` value from `build/Version.props`, then push the tag. For example, a `Version` of `12.2.0` requires `v12.2.0`.
 4. The **Release** workflow checks the version, reruns the full CI matrix, and publishes the validated `.nupkg` and accompanying `.snupkg` files. Approve the `nuget` environment deployment if you configured required reviewers.
 5. After NuGet publishing succeeds, a separate job creates a GitHub release with generated notes and attaches those same packages and symbols. Version tags containing a hyphen produce GitHub prereleases. Only this job receives `contents: write`; it receives no NuGet credential or OIDC permission.
 
@@ -64,7 +67,7 @@ python scripts/build.py --framework net10.0
 python scripts/build.py --package-tests-only --framework net10.0
 
 # Validate a proposed release tag without building or publishing.
-python scripts/build.py --check-tag v12.1.5
+python scripts/build.py --check-tag v12.2.0
 ```
 
 CI and release configuration are committed to this repository. Creating the GitHub environment, setting `NUGET_USER`, and registering the NuGet.org policy are account-level setup steps; building the repository does not perform them.

@@ -5,7 +5,7 @@ sidebar_position: 5
 doc-type: how-to
 ---
 
-The default headless drawing backend supports behavior tests without producing pixels. Add official `Avalonia.Skia` version `12.1.5` when tests need screenshots, recording, or pixel comparisons. Add the same-version theme and fonts used by the application.
+The default headless drawing backend supports behavior tests without producing pixels. It approximates geometry intersections using bounds. Add official `Avalonia.Skia` version `12.2.0` when tests need precise geometry intersections, screenshots, recording, or pixel comparisons. Add the same-version theme and fonts used by the application.
 
 ```csharp
 public static AppBuilder BuildAvaloniaApp() =>

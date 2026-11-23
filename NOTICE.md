@@ -8,10 +8,10 @@ The headless platform, original xUnit adapter, shared headless tests, signing
 key, and public-key declaration were imported from
 [`wieslawsoltes/Avalonia` at `6b6c573a03599510b568033757f59c908f7328a7`](https://github.com/wieslawsoltes/Avalonia/tree/6b6c573a03599510b568033757f59c908f7328a7).
 The renderer implementation in
-`src/Headless/Avalonia.Headless/HeadlessPlatformRenderInterface.cs` comes from
-the matching Avalonia 12.1.4 release,
-[`2d79ba55fae1b1e71c69f93a668080c9029e6a31`](https://github.com/AvaloniaUI/Avalonia/tree/2d79ba55fae1b1e71c69f93a668080c9029e6a31),
-because the fork's development renderer depends on unreleased geometry APIs.
+`src/Headless/Avalonia.Headless/HeadlessPlatformRenderInterface.cs` was based on
+[Avalonia 12.1.4](https://github.com/AvaloniaUI/Avalonia/tree/2d79ba55fae1b1e71c69f93a668080c9029e6a31).
+ProTest adapts it to the geometry APIs in
+[Avalonia 12.2.0](https://github.com/AvaloniaUI/Avalonia/releases/tag/12.2.0).
 
 ProTest changes include standalone NuGet dependencies, package metadata,
 the xUnit 4.x adapter, cancellable session shutdown and cleanup, regression

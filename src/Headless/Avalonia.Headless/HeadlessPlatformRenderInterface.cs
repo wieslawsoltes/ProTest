@@ -46,7 +46,15 @@ namespace Avalonia.Headless
             return new HeadlessGeometryStub(rect);
         }
 
-        public IStreamGeometryImpl CreateStreamGeometry() => new HeadlessStreamingGeometryStub();
+        public IStreamGeometryBuilder CreateStreamGeometryBuilder(IGeometryImpl? source = null)
+        {
+            return source switch
+            {
+                null => new HeadlessStreamGeometryBuilder([]),
+                HeadlessStreamGeometryStub geometry => new HeadlessStreamGeometryBuilder(geometry.Figures),
+                _ => throw new ArgumentException("The source must be a headless stream geometry.", nameof(source))
+            };
+        }
 
         public IGeometryImpl CreateGeometryGroup(FillRule fillRule, IReadOnlyList<IGeometryImpl> children) =>
             new HeadlessGeometryStub(children.Count != 0 ?
@@ -177,7 +185,7 @@ namespace Avalonia.Headless
                 Bounds = bounds;
             }
 
-            public Rect Bounds { get; set; }
+            public Rect Bounds { get; }
             
             public double ContourLength { get; } = 0;
             
@@ -202,6 +210,22 @@ namespace Avalonia.Headless
 
             public IGeometryImpl Intersect(IGeometryImpl geometry)
                 => new HeadlessGeometryStub(geometry.Bounds.Intersect(Bounds));
+
+            public IntersectionResult GetFillIntersectionResult(IGeometryImpl geometry)
+            {
+                // The lightweight renderer approximates geometry intersections with bounds.
+                var otherBounds = geometry.Bounds;
+                if (Bounds.Size == default || otherBounds.Size == default || !Bounds.Intersects(otherBounds))
+                    return IntersectionResult.Empty;
+
+                if (Bounds.Contains(otherBounds))
+                    return IntersectionResult.FullyInside;
+
+                if (otherBounds.Contains(Bounds))
+                    return IntersectionResult.FullyContains;
+
+                return IntersectionResult.Intersects;
+            }
 
             public ITransformedGeometryImpl WithTransform(Matrix transform) =>
                 new HeadlessTransformedGeometryStub(this, transform);
@@ -255,125 +279,135 @@ namespace Avalonia.Headless
             public Matrix Transform { get; }
         }
 
-        private class HeadlessStreamingGeometryStub : HeadlessGeometryStub, IStreamGeometryImpl
+        private readonly record struct HeadlessFigure(Point[] Points, bool IsFilled);
+
+        private sealed class HeadlessStreamGeometryStub(HeadlessFigure[] figures)
+            : HeadlessGeometryStub(CalculateBounds(figures))
         {
-            private HeadlessStreamingGeometryContextStub _context;
-            
-            public HeadlessStreamingGeometryStub() : base(default)
-            {
-                _context = new HeadlessStreamingGeometryContextStub(this);
-            }
-
-            public IStreamGeometryImpl Clone()
-            {
-                return this;
-            }
-
-            public IStreamGeometryContextImpl Open()
-            {
-                return _context;
-            }
+            public IReadOnlyList<HeadlessFigure> Figures => figures;
 
             public override bool FillContains(Point point)
             {
-                return _context.FillContains(point);
+                foreach (var figure in figures)
+                {
+                    if (figure.IsFilled && FigureContains(figure.Points, point))
+                        return true;
+                }
+
+                return false;
             }
 
-            private class HeadlessStreamingGeometryContextStub : IStreamGeometryContextImpl
+            private static Rect CalculateBounds(HeadlessFigure[] figures)
             {
-                private readonly HeadlessStreamingGeometryStub _parent;
-                private List<Point> points = new List<Point>();
-                public HeadlessStreamingGeometryContextStub(HeadlessStreamingGeometryStub parent)
-                {
-                    _parent = parent;
-                }
+                if (figures.Length == 0)
+                    return default;
 
-                private void Track(Point pt)
-                {
-                    points.Add(pt);
-                }
+                var left = double.MaxValue;
+                var right = double.MinValue;
+                var top = double.MaxValue;
+                var bottom = double.MinValue;
 
-                public Rect CalculateBounds()
+                foreach (var figure in figures)
                 {
-                    var left = double.MaxValue;
-                    var right = double.MinValue;
-                    var top = double.MaxValue;
-                    var bottom = double.MinValue;
-
-                    foreach (var p in points)
+                    foreach (var point in figure.Points)
                     {
-                        left = Math.Min(p.X, left);
-                        right = Math.Max(p.X, right);
-                        top = Math.Min(p.Y, top);
-                        bottom = Math.Max(p.Y, bottom);
+                        left = Math.Min(point.X, left);
+                        right = Math.Max(point.X, right);
+                        top = Math.Min(point.Y, top);
+                        bottom = Math.Max(point.Y, bottom);
                     }
-
-                    return new Rect(new Point(left, top), new Point(right, bottom));
                 }
-                
-                public void Dispose()
+
+                return new Rect(new Point(left, top), new Point(right, bottom));
+            }
+
+            private static bool FigureContains(Point[] points, Point point)
+            {
+                // Use the existing point-in-triangle approximation within each figure.
+                for (var i = 0; i < points.Length; i++)
                 {
-                    _parent.Bounds = CalculateBounds();
+                    var a = points[i];
+                    var b = points[(i + 1) % points.Length];
+                    var c = points[(i + 2) % points.Length];
+
+                    Vector v0 = c - a;
+                    Vector v1 = b - a;
+                    Vector v2 = point - a;
+
+                    var dot00 = v0 * v0;
+                    var dot01 = v0 * v1;
+                    var dot02 = v0 * v2;
+                    var dot11 = v1 * v1;
+                    var dot12 = v1 * v2;
+
+                    var invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+                    var u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+                    var v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+                    if (u >= 0 && v >= 0 && u + v < 1)
+                        return true;
                 }
 
-                public void ArcTo(Point point, Size size, double rotationAngle, bool isLargeArc, SweepDirection sweepDirection, bool isStroked = true)
-                    => Track(point);
+                return false;
+            }
+        }
 
-                public void BeginFigure(Point startPoint, bool isFilled = true) => Track(startPoint);
+        private sealed class HeadlessStreamGeometryBuilder(IReadOnlyList<HeadlessFigure> source) : IStreamGeometryBuilder
+        {
+            private readonly List<HeadlessFigure> _figures = new(source);
+            private readonly List<Point> _points = [];
+            private bool _isFilled;
+            private bool _built;
 
-                public void CubicBezierTo(Point point1, Point point2, Point point3, bool isStroked = true)
-                {
-                    Track(point1);
-                    Track(point2);
-                    Track(point3);
-                }
+            public IGeometryImpl ToGeometry()
+            {
+                if (_built)
+                    throw new InvalidOperationException("The geometry has already been built.");
 
-                public void QuadraticBezierTo(Point control, Point endPoint, bool isStroked = true)
-                {
-                    Track(control);
-                    Track(endPoint);
-                }
+                EndFigure(false);
+                _built = true;
+                return new HeadlessStreamGeometryStub(_figures.ToArray());
+            }
 
-                public void LineTo(Point point, bool isStroked = true) => Track(point);
+            public void BeginFigure(Point startPoint, bool isFilled = true)
+            {
+                EndFigure(false);
+                _isFilled = isFilled;
+                _points.Add(startPoint);
+            }
 
-                public void EndFigure(bool isClosed)
-                {
-                    Dispose();
-                }
+            public void EndFigure(bool isClosed)
+            {
+                if (_points.Count == 0)
+                    return;
 
-                public void SetFillRule(FillRule fillRule)
-                {
+                _figures.Add(new HeadlessFigure(_points.ToArray(), _isFilled));
+                _points.Clear();
+            }
 
-                }
-                
-                public bool FillContains(Point point)
-                {
-                    // Use the algorithm from https://www.blackpawn.com/texts/pointinpoly/default.html
-                    // to determine if the point is in the geometry (since it will always be convex in this situation)
-                    for (int i = 0; i < points.Count; i++)
-                    {
-                        var a = points[i];
-                        var b = points[(i + 1) % points.Count];
-                        var c = points[(i + 2) % points.Count];
+            public void ArcTo(Point point, Size size, double rotationAngle, bool isLargeArc, SweepDirection sweepDirection, bool isStroked = true)
+                => _points.Add(point);
 
-                        Vector v0 = c - a;
-                        Vector v1 = b - a;
-                        Vector v2 = point - a;
+            public void CubicBezierTo(Point controlPoint1, Point controlPoint2, Point endPoint, bool isStroked = true)
+            {
+                _points.Add(controlPoint1);
+                _points.Add(controlPoint2);
+                _points.Add(endPoint);
+            }
 
-                        var dot00 = v0 * v0;
-                        var dot01 = v0 * v1;
-                        var dot02 = v0 * v2;
-                        var dot11 = v1 * v1;
-                        var dot12 = v1 * v2;
+            public void QuadraticBezierTo(Point controlPoint, Point endPoint, bool isStroked = true)
+            {
+                _points.Add(controlPoint);
+                _points.Add(endPoint);
+            }
 
+            public void LineTo(Point point, bool isStroked = true) => _points.Add(point);
 
-                        var invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
-                        var u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-                        var v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-                        if ((u >= 0) && (v >= 0) && (u + v < 1)) return true;
-                    }
-                    return false;
-                }
+            public void SetFillRule(FillRule fillRule)
+            {
+            }
+
+            public void Dispose()
+            {
             }
         }
 
