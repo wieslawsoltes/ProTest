@@ -10,20 +10,17 @@ namespace Avalonia.Headless.UnitTests;
 public class RenderingTests
 {
 #if NUNIT
-    [Test]
+    [AvaloniaTest]
 #elif XUNIT
-    [Fact]
+    [AvaloniaFact]
 #endif
-    public async Task Headless_Stream_Geometry_Should_Append_Without_Mutating_Clones()
+    public void Headless_Stream_Geometry_Should_Append_Without_Mutating_Clones()
     {
-        await using var session = HeadlessUnitTestSession.StartNew(typeof(Application));
-#if XUNIT
-        var cancellationToken = TestContext.Current.CancellationToken;
-#else
-        var cancellationToken = System.Threading.CancellationToken.None;
-#endif
-        await session.Dispatch(() =>
+        // Switch renderers on the current dispatcher so the shared session stays active.
+        var builder = AppBuilder.Configure<Application>().UseHeadless(new AvaloniaHeadlessPlatformOptions());
+        try
         {
+            builder.RenderingSubsystemInitializer!();
             var geometry = StreamGeometry.Parse("M0,0 L10,0 0,10 Z");
             var clone = geometry.Clone();
 
@@ -45,7 +42,11 @@ public class RenderingTests
             var probe = new RectangleGeometry(new Rect(21, 1, 1, 1));
             AssertHelper.Equal<IntersectionResult?>(IntersectionResult.FullyInside, geometry.GetFillIntersectionResult(probe));
             AssertHelper.Equal<IntersectionResult?>(IntersectionResult.Empty, clone.GetFillIntersectionResult(probe));
-        }, cancellationToken);
+        }
+        finally
+        {
+            TestApplication.BuildAvaloniaApp().RenderingSubsystemInitializer!();
+        }
     }
 
 #if NUNIT
