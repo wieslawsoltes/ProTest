@@ -10,6 +10,45 @@ namespace Avalonia.Headless.UnitTests;
 public class RenderingTests
 {
 #if NUNIT
+    [Test]
+#elif XUNIT
+    [Fact]
+#endif
+    public async Task Headless_Stream_Geometry_Should_Append_Without_Mutating_Clones()
+    {
+        await using var session = HeadlessUnitTestSession.StartNew(typeof(Application));
+#if XUNIT
+        var cancellationToken = TestContext.Current.CancellationToken;
+#else
+        var cancellationToken = System.Threading.CancellationToken.None;
+#endif
+        await session.Dispatch(() =>
+        {
+            var geometry = StreamGeometry.Parse("M0,0 L10,0 0,10 Z");
+            var clone = geometry.Clone();
+
+            using (var context = geometry.Open())
+            {
+                context.BeginFigure(new Point(20, 0));
+                context.LineTo(new Point(30, 0));
+                context.LineTo(new Point(20, 10));
+                context.EndFigure(true);
+            }
+
+            AssertHelper.Equal(new Rect(0, 0, 30, 10), geometry.Bounds);
+            AssertHelper.Equal(new Rect(0, 0, 10, 10), clone.Bounds);
+            AssertHelper.True(geometry.FillContains(new Point(2, 2)));
+            AssertHelper.True(geometry.FillContains(new Point(22, 2)));
+            AssertHelper.False(geometry.FillContains(new Point(15, 2)));
+            AssertHelper.False(clone.FillContains(new Point(22, 2)));
+
+            var probe = new RectangleGeometry(new Rect(21, 1, 1, 1));
+            AssertHelper.Equal<IntersectionResult?>(IntersectionResult.FullyInside, geometry.GetFillIntersectionResult(probe));
+            AssertHelper.Equal<IntersectionResult?>(IntersectionResult.Empty, clone.GetFillIntersectionResult(probe));
+        }, cancellationToken);
+    }
+
+#if NUNIT
     [AvaloniaTest]
 #elif XUNIT
     [AvaloniaFact]

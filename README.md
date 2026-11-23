@@ -35,12 +35,12 @@ runs in-process; real Appium server testing is documented separately.
 
 | Package | NuGet | Purpose | Tested xUnit version | Avalonia version |
 | --- | --- | --- | --- | --- |
-| `ProTest.Avalonia.Headless` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless) | Headless platform, test sessions, and testing helpers | Framework independent | **12.1.5**, exact |
-| `ProTest.Avalonia.Headless.XUnit.v3` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3) | xUnit 3.x adapter | **3.2.2** | **12.1.5**, exact |
-| `ProTest.Avalonia.Headless.XUnit.v4` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4) | xUnit 4.x adapter | **4.0.2** | **12.1.5**, exact |
+| `ProTest.Avalonia.Headless` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless) | Headless platform, test sessions, and testing helpers | Framework independent | **12.2.0**, exact |
+| `ProTest.Avalonia.Headless.XUnit.v3` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3) | xUnit 3.x adapter | **3.2.2** | **12.2.0**, exact |
+| `ProTest.Avalonia.Headless.XUnit.v4` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4) | xUnit 4.x adapter | **4.0.2** | **12.2.0**, exact |
 
 All three packages target **.NET 8 and .NET 10**. The stable release is
-**12.1.5**, aligned with Avalonia **12.1.5**. New Avalonia versions require a tested
+**12.2.0**, aligned with Avalonia **12.2.0**. New Avalonia versions require a tested
 ProTest release because the headless platform uses version-specific internals.
 
 **xUnit naming:** the xUnit framework's 4.x releases still ship as
@@ -54,12 +54,11 @@ Install **one adapter per test project**. Both expose the original
 `.v3` and `.v4` suffixes. The headless assembly remains `Avalonia.Headless`.
 Remove official `Avalonia.Headless` / `Avalonia.Headless.XUnit` package
 references when migrating: ProTest supplies those types and assembly identities.
-Keep other Avalonia packages, such as themes and Skia, at version **12.1.5**.
+Keep other Avalonia packages, such as themes and Skia, at version **12.2.0**.
 
 For Central Package Management, update ProTest alongside `Avalonia.Desktop`.
-Matching versions do not need a separate HarfBuzz override. A mixed-patch
-`NU1608` warning means the packages are outside the tested dependency
-constraints; overriding HarfBuzz alone does not resolve the Avalonia mismatch.
+Matching versions do not need a separate HarfBuzz override. Align all Avalonia
+packages with ProTest to resolve `NU1608` warnings from mismatched versions.
 See the [central package setup](https://wieslawsoltes.github.io/ProTest/getting-started/packages#central-package-management-and-desktop-applications).
 
 ## Quick start
@@ -77,7 +76,7 @@ xUnit 4.x and supports `dotnet test` with the VSTest runner:
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ProTest.Avalonia.Headless.XUnit.v4" Version="12.1.5" />
+    <PackageReference Include="ProTest.Avalonia.Headless.XUnit.v4" Version="12.2.0" />
     <PackageReference Include="xunit.v3.mtp-off" Version="4.0.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
@@ -227,7 +226,7 @@ automatically receive dispatcher affinity.
 ## Rendering tests
 
 For real pixel rendering, reference `Avalonia.Skia` and your theme package
-at **12.1.5**, then configure:
+at **12.2.0**, then configure:
 
 ```csharp
 public static AppBuilder BuildAvaloniaApp() =>
@@ -268,7 +267,7 @@ cannot interrupt synchronous code that blocks the UI thread.
 
 The standalone headless project uses Avalonia's supported build opt-in for
 unstable private APIs and pins its official Avalonia dependencies to
-`[12.1.5]`. This selects the implementation assemblies rather than the
+`[12.2.0]`. This selects the implementation assemblies rather than the
 restricted public reference assemblies.
 
 Internal friend access additionally requires the original `Avalonia.Headless`
