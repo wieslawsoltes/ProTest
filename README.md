@@ -39,9 +39,10 @@ runs in-process; real Appium server testing is documented separately.
 | `ProTest.Avalonia.Headless.XUnit.v3` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v3.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v3) | xUnit 3.x adapter | **3.2.2** | **12.2.0**, exact |
 | `ProTest.Avalonia.Headless.XUnit.v4` | [![NuGet](https://img.shields.io/nuget/v/ProTest.Avalonia.Headless.XUnit.v4.svg)](https://www.nuget.org/packages/ProTest.Avalonia.Headless.XUnit.v4) | xUnit 4.x adapter | **4.0.2** | **12.2.0**, exact |
 
-All three packages target **.NET 8 and .NET 10**. The stable release is
-**12.2.0**, aligned with Avalonia **12.2.0**. New Avalonia versions require a tested
-ProTest release because the headless platform uses version-specific internals.
+All three packages target **.NET 8 and .NET 10**. This checkout builds ProTest
+**12.2.0** against Avalonia **12.2.0**. The NuGet badges show the published
+versions. New Avalonia versions require a tested ProTest release because the
+headless platform uses version-specific internals.
 
 **xUnit naming:** the xUnit framework's 4.x releases still ship as
 `xunit.v3.*` packages and use `Xunit` / `Xunit.v3` namespaces. ProTest's `.v4`

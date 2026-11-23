@@ -8,7 +8,7 @@ Package validation also tests `Avalonia.Desktop` consumers with Central Package 
 
 ## Repository configuration
 
-The following GitHub settings were configured and verified for `wieslawsoltes/ProTest` on October 26, 2026:
+The `wieslawsoltes/ProTest` release workflow uses these GitHub settings.
 
 | Setting | Value |
 | --- | --- |
@@ -27,17 +27,20 @@ These steps describe how to reproduce or update the configuration, including for
 1. Sign in to the NuGet.org account that should own the packages. The repository metadata credits **Wiesław Šoltés**; NuGet.org ownership is established by the publishing account and cannot be assigned through a `.csproj` or `.nuspec` field.
 2. Add a GitHub Actions environment named `nuget` to the repository. Select deployment branches and tags, then add a **tag** rule for `v*` to match the release workflow. The ProTest configuration has no required reviewer or wait timer; add those only if your release process needs them.
 3. Add the GitHub Actions variable `NUGET_USER` at repository level or in the `nuget` environment. Use your NuGet.org **profile username**, not an email address. ProTest uses `wieslawsoltes` in the `nuget` environment. No long-lived API key secret is needed.
-4. In NuGet.org, open your account's **Trusted Publishing** settings and add a GitHub policy with these values:
+4. On NuGet.org, open **Trusted Publishing** from your account menu. Check the existing GitHub policy for this repository or create one with these values.
 
    | Setting | Value |
    | --- | --- |
+   | Policy name for a new policy | `ProTest release` |
+   | Package owner | `wieslawsoltes` |
    | Repository owner | `wieslawsoltes` |
    | Repository | `ProTest` |
    | Workflow file | `release.yml` |
    | Environment | `nuget` |
-   | Package pattern | `ProTest.*` |
+   | Scope for the existing packages | Push only new package versions |
+   | Glob pattern | `ProTest.*` |
 
-   Select the intended package owner and grant the scopes for creating new packages and publishing new versions. Enter only `release.yml` in the workflow field, without `.github/workflows/`.
+   Enter the workflow filename exactly as shown. The release job uses the `nuget` environment when it requests an OIDC token.
 
 The workflow grants `id-token: write` only to the publishing job. `NuGet/login` exchanges the GitHub OIDC token for a short-lived NuGet key immediately before publishing. The key is passed through an environment variable and is not stored in the repository. See Microsoft's [trusted publishing documentation](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing) and the official [NuGet/login action](https://github.com/NuGet/login).
 
